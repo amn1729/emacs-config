@@ -20,9 +20,9 @@
 ;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/emacs-livedown"))
 ;; (require 'livedown)
 
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/highlight-indent-guides-master"))
-(require 'highlight-indent-guides)
-(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/highlight-indent-guides-master"))
+;; (require 'highlight-indent-guides)
+;; (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
 
 ;; Basic
 (menu-bar-mode -1)
@@ -127,7 +127,7 @@
 (use-package treemacs
   :bind
   (:map global-map
-	("C-c \\" . treemacs))
+	    ("C-c \\" . treemacs))
   :config
   (setq treemacs-project-follow-mode t))
 
@@ -146,16 +146,6 @@
 (use-package fish-mode)
 ;; Org
 (setq org-src-preserve-indentation t)
-
-;; lsp-mode
-;; (use-package lsp-mode
-;;   :ensure t
-;;   :hook (
-;; 	 (web-mode . lsp-deferred)
-;; 	 (lsp-mode . lsp-enable-which-key-integration)
-;; 	 )
-;;   :commands lsp-deferred)
-
 
 ;; (use-package lsp-ui
 ;;   :ensure t
@@ -221,7 +211,8 @@
 ;; Avy
 (use-package avy
   :config
-  (setq avy-background t))
+  (setq avy-background t)
+    )
 
 ;; Ace jump
 ;; (use-package ace-jump-mode)
@@ -240,6 +231,7 @@
   (projectile-mode 1)
   :bind
   ("C-z" . 'projectile-find-file))
+
 
 ;; Which-key
 (use-package which-key
@@ -297,16 +289,8 @@
                (backward-char 2))
       (insert "<"))))
 
-;; Typescript
-(use-package typescript-mode
-  :init
-  (add-hook 'typescript-mode-hook (lambda ()
-                                    (when (string-equal "tsx" (file-name-extension buffer-file-name))
-                                      (define-key typescript-mode-map "<" 'tsx-electric-lt))))
-  :mode (("\\.ts\\'" . typescript-mode)
-         ("\\.tsx\\'" . typescript-mode))
-  :hook (typescript-mode . setup-tide-mode))
 
+;; Tide
 (use-package tide)
 (defun setup-tide-mode ()
   (interactive)
@@ -320,46 +304,100 @@
   ;; `M-x package-install [ret] company`
   (company-mode +1))
 
+;; Lsp , tree sitter, tsx
+(use-package tree-sitter
+  :ensure t
+  :config
+  ;; activate tree-sitter on any buffer containing code for which it has a parser available
+  (global-tree-sitter-mode)
+  ;; you can easily see the difference tree-sitter-hl-mode makes for python, ts or tsx
+  ;; by switching on and off
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(use-package tree-sitter-langs
+  :ensure t
+  :after tree-sitter)
+
+(use-package typescript-mode
+  :after tree-sitter
+  :hook ((typescript-mode . prettier-js-mode)
+         (typescript-mode . setup-tide-mode))
+  :config
+  ;; we choose this instead of tsx-mode so that eglot can automatically figure out language for server
+  ;; see https://github.com/joaotavora/eglot/issues/624 and https://github.com/joaotavora/eglot#handling-quirky-servers
+  (define-derived-mode typescriptreact-mode typescript-mode
+    "TypeScript TSX")
+
+  ;; use our derived mode for tsx files
+  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
+  ;; by default, typescript-mode is mapped to the treesitter typescript parser
+  ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
+  (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx)))
+(add-hook 'typescriptreact-mode-hook (lambda ()
+                                         (message "This is tsx mode")
+                                         (define-key typescript-mode-map "<" 'tsx-electric-lt)))
+
+;; lsp-mode
+;; (use-package lsp-mode
+;;   :ensure t
+;;   :hook (
+;; 	 (typescript-mode . lsp-deferred)
+;; 	 (lsp-mode . lsp-enable-which-key-integration)
+;; 	 )
+;;   :commands lsp-deferred)
+
+
+;; Typescript
+;; (use-package typescript-mode
+;;   :init
+;;   (add-hook 'typescript-mode-hook (lambda ()
+;;                                     (when (string-equal "tsx" (file-name-extension buffer-file-name))
+;;                                       (define-key typescript-mode-map "<" 'tsx-electric-lt))))
+;;   :mode (("\\.ts\\'" . typescript-mode))
+;;          ;; ("\\.tsx\\'" . typescript-mode))
+;;   ;; :hook (typescript-mode . setup-tide-mode))
+;;   )
+
+
 ;; aligns annotation to the right hand side
-(setq company-tooltip-align-annotations t)
+;; (setq company-tooltip-align-annotations t)
 
 ;; formats the buffer before saving
 ;; (add-hook 'before-save-hook 'tide-format-before-save)
-;; (add-hook 'typescript-mode-hook 'js-mode)   
+;; (add-hook 'typescript-mode-hook #'setup-tide-mode)   
 
 ;; (use-package flycheck
 ;;   :config
 ;;   (add-hook 'typescript-mode-hook 'flycheck-mode))
 
 ;; ;; Web mode
-(use-package web-mode
-  :mode (("\\.html?\\'" . web-mode))
-  :init
-  (add-hook 'web-mode-hook (lambda ()
-                             (when (string-equal "tsx" (file-name-extension buffer-file-name))
-                               ;; (setup-tide-mode)
-                               (define-key web-mode-map "<" 'tsx-electric-lt)
-
-                    )))
-  :config
-(setq web-mode-markup-indent-offset 2
-        web-mode-css-indent-offset 2
-        web-mode-code-indent-offset 2
-        web-mode-block-padding 2
-        web-mode-comment-style 2
-        web-mode-enable-auto-closing t 
-        web-mode-enable-css-colorization t
-        web-mode-enable-auto-pairing t
-        web-mode-enable-comment-keywords t
-        web-mode-enable-current-element-highlight t
-    	web-mode-enable-auto-indentation nil
-    	web-mode-enable-auto-quoting nil
-        web-mode-content-types-alist
-        '(("jsx" . "\\.tsx\\'"))
-        )
-  ;; enable typescript-tslint checker
-  ;; (flycheck-add-mode 'typescript-tslint 'web-mode)  
-  )
+;; (use-package web-mode
+;;   :mode (("\\.html?\\'" . web-mode)
+;;          ("\\.tsx\\'" . web-mode))
+;;   :init
+;;   (add-hook 'web-mode-hook (lambda ()
+;;                              (when (string-equal "tsx" (file-name-extension buffer-file-name))
+;;                                ;; (setup-tide-mode)
+;;                                (define-key web-mode-map "<" 'tsx-electric-lt))))
+;;   :config
+;;   (setq web-mode-markup-indent-offset 2
+;;         web-mode-css-indent-offset 2
+;;         web-mode-code-indent-offset 2
+;;         web-mode-block-padding 2
+;;         web-mode-comment-style 2
+;;         web-mode-enable-auto-closing t 
+;;         web-mode-enable-css-colorization t
+;;         web-mode-enable-auto-pairing t
+;;         web-mode-enable-comment-keywords t
+;;         web-mode-enable-current-element-highlight t
+;;     	web-mode-enable-auto-indentation nil
+;;     	web-mode-enable-auto-quoting nil
+;;         web-mode-content-types-alist
+;;         '(("jsx" . "\\.tsx\\'"))
+;;         )
+;;   ;; enable typescript-tslint checker
+;;   ;; (flycheck-add-mode 'typescript-tslint 'web-mode)  
+;;   )
 
 ;; rjsx
 (use-package rjsx-mode
@@ -374,10 +412,11 @@
   :hook ((rjsx-mode . prettier-js-mode)
 	     (web-mode . prettier-js-mode)
 	     (tide-mode . prettier-js-mode)
+	     (typescriptreact-mode . prettier-js-mode)
 	     (svelte-mode . prettier-js-mode))
-  :config
-  (add-hook 'rjsx-mode-hook (lambda()
-                              (flycheck-add-mode 'javascript-eslint 'rjsx-mode)))
+  ;; :config
+  ;; (add-hook 'rjsx-mode-hook (lambda()
+  ;;                             (flycheck-add-mode 'javascript-eslint 'rjsx-mode)))
   :diminish prettier-js-mode)
 
 ;; Auto-start on any markup modes
@@ -391,6 +430,11 @@
 ;;   :hook (python-mode . py-autopep8-enable-on-save))
 
 ;; Custom functions
+(defun projectile-find-file-in-current-directory ()
+  (interactive)
+(projectile-find-file-in-directory (file-name-directory buffer-file-name)))
+
+
 (defun capitalize-first-char (&optional string)
   "Capitalize only the first character of the input STRING."
   (when (and string (> (length string) 0))
@@ -403,12 +447,17 @@
   (kill-buffer (current-buffer)))
 (global-set-key (kbd "C-c d") 'kill-current-buffer)
 
-;; goto-char-right
-(defun goto-char-right ()
+;; goto-char-2-right
+(defun goto-char-2-right ()
   (interactive)
   (call-interactively 'avy-goto-char-2)
-  (right-char))
-(global-set-key (kbd "C-c q") 'goto-char-right)
+  (right-char +2))
+
+;; goto-char-right
+;; (defun goto-char-right ()
+;;   (interactive)
+;;   (call-interactively 'avy-goto-char)
+;;   (right-char +1))
 
 ;; move-region-up-down
 (defun move-text-internal (arg)
@@ -450,14 +499,12 @@
 (defun split-right-and-move ()
   (interactive)
   (split-window-right)
-  (other-window 1)
-  )
+  (other-window 1))
 
 (defun split-below-and-move ()
   (interactive)
   (split-window-below)
-  (other-window 1)
-  )
+  (other-window 1))
 
 (defun replace-char ()
   (interactive)
@@ -472,6 +519,12 @@
   (if (use-region-p)
       (meow-replace)
     (replace-char)))
+
+(defun my-meow-find-backward ()
+  (interactive)
+  (meow-join +1)
+  (meow-cancel-selection)
+  (call-interactively 'meow-find))
 
 ;; yasnippets
 (use-package yasnippet
@@ -502,6 +555,7 @@
 (global-set-key (kbd "C-c p") 'point-to-register)
 (global-set-key (kbd "C-c v") 'jump-to-register)
 (global-set-key (kbd "C-c z") 'projectile-find-file)
+(global-set-key (kbd "C-c i") 'projectile-find-file-in-current-directory)
 
 ;; delete-line
 ;; (global-set-key (kbd "C-'") (kbd "abc C-a C-k C-k"))
@@ -579,6 +633,7 @@
    '("e" . meow-next-word)
    '("E" . meow-next-symbol)
    '("f" . meow-find)
+   '("F" . my-meow-find-backward)
    '("g" . meow-cancel-selection)
    '("G" . meow-grab)
    '("h" . meow-left)
@@ -614,7 +669,7 @@
    '("z" . goto-last-change)
    '("Z" . goto-last-change-reverse)
    '("'" . repeat)
-   '("`" . goto-char-right)
+   '("`" . goto-char-2-right)
    ;; my shortcuts
    '("\\" . comment-line)
    '("/" . "M-s")
@@ -635,22 +690,25 @@
 (diminish 'hungry-delete-mode)
 
 ;; theme setting
-;; (setq modus-themes-mode-line '(borderless))
+(mapc #'disable-theme custom-enabled-themes)
+;; (setq modus-themes-mode-line '(borderless accented))
 ;; (setq modus-themes-region '(bg-only))
 ;; (setq modus-themes-syntax '(alt-syntax))
 ;; (load-theme 'modus-vivendi t)
 
-;; (setq ef-themes-to-toggle '(ef-spring ef-winter))
-(setq ef-themes-to-toggle '(ef-trio-light ef-winter))
+(setq ef-themes-to-toggle '(ef-trio-dark ef-trio-light))
+;; (setq ef-themes-to-toggle '(ef-trio-light ef-autumn))
 
-(mapc #'disable-theme custom-enabled-themes)
-;; (load-theme 'ef-summer t)
-(load-theme 'ef-winter t)
-(ef-themes-select 'ef-winter)
+;; ;; (load-theme 'ef-summer t)
+;; ;; (load-theme 'ef-winter t)
+(load-theme 'ef-trio-dark t)
+(ef-themes-select 'ef-trio-dark)
 
 ;; (global-set-key (kbd "C-c t") 'modus-themes-toggle)
 (global-set-key (kbd "C-c t") 'ef-themes-toggle)
 
+
+;; (load-theme 'vscode-dark-plus t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -658,13 +716,13 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ansi-color-faces-vector
-   [default bold shadow italic underline bold bold-italic bold])
+    [default bold shadow italic underline bold bold-italic bold])
  '(ansi-color-names-vector
-   ["#21252B" "#E06C75" "#98C379" "#E5C07B" "#61AFEF" "#C678DD" "#56B6C2" "#ABB2BF"])
+    ["#21252B" "#E06C75" "#98C379" "#E5C07B" "#61AFEF" "#C678DD" "#56B6C2" "#ABB2BF"])
  '(company-quickhelp-color-background "#3E4452")
  '(company-quickhelp-color-foreground "#ABB2BF")
  '(custom-safe-themes
-   '("d2b7abf3fb8e9505a478a04bd6d727a029cab49d58c0fafe271293d095438067" "6976ce7d103d13c56a79cd0305f743ac880dafd52124a05f7163f51bca84e256" "22c213e81a533c259127302ef1e0f2d1f332df83969a1f9cf6d5696cbe789543" "3741b7bfab715b2e62d12ed0b129c6f8345d60f056fce2c0a5de24822876f854" "935cd704a3b4b12c9c0582da1d25437e2802d0f82c5d46de0eb5a968dfad08da" "347313c47366c3cb305fb63dff7df87426061d5529a86c215086fe8581228733" "2a0669753764cc15b818fc882d271fc30850d5a45220a499fb9d835846001b7c" "4e7672ce1015731d9d6955652f8f1b438420f109d15f662a014fa4e992429b9a" "45611797b789abf53e97c43b29c7f10dd6f18971e238e700bc885e702531053a" "04a9d8ab1ba3288f88018d1a2ba84be4c21a3b3c0b479005ac2b2ee7d417caa3" "931ee45708e894d5233fc4a94ae0065c765c1a0aeb1bd8d9feee22f5622f44b4" "9dbd2c6f93cc1774c261f23042be8bf7decc8f6599c21189c04d7791231b2b79" "c01cd0485ce35cf0a19ab91146d2c2b6528ec60ad4c8ffec5b2b7cc4bc05bd80" "01f52ed4dc9cfd4f397eda57c9eb5fea360bd6c18a2684121cc47279bfca5a51" "5ca9d0a5971e42ecee31398533e5b9dfc01c61a69bf3fd69395aa189c792252e" "c77866b9ee1cc2fd95cfb55fe99813b95c10f620f51f210de96c8b8bdead4c46" default))
+    '("e09401ab2c457e2e4d8b800e1c546dbc8339dc33b2877836ba5d9b6294ae6e55" "d2b7abf3fb8e9505a478a04bd6d727a029cab49d58c0fafe271293d095438067" "6976ce7d103d13c56a79cd0305f743ac880dafd52124a05f7163f51bca84e256" "22c213e81a533c259127302ef1e0f2d1f332df83969a1f9cf6d5696cbe789543" "3741b7bfab715b2e62d12ed0b129c6f8345d60f056fce2c0a5de24822876f854" "935cd704a3b4b12c9c0582da1d25437e2802d0f82c5d46de0eb5a968dfad08da" "347313c47366c3cb305fb63dff7df87426061d5529a86c215086fe8581228733" "2a0669753764cc15b818fc882d271fc30850d5a45220a499fb9d835846001b7c" "4e7672ce1015731d9d6955652f8f1b438420f109d15f662a014fa4e992429b9a" "45611797b789abf53e97c43b29c7f10dd6f18971e238e700bc885e702531053a" "04a9d8ab1ba3288f88018d1a2ba84be4c21a3b3c0b479005ac2b2ee7d417caa3" "931ee45708e894d5233fc4a94ae0065c765c1a0aeb1bd8d9feee22f5622f44b4" "9dbd2c6f93cc1774c261f23042be8bf7decc8f6599c21189c04d7791231b2b79" "c01cd0485ce35cf0a19ab91146d2c2b6528ec60ad4c8ffec5b2b7cc4bc05bd80" "01f52ed4dc9cfd4f397eda57c9eb5fea360bd6c18a2684121cc47279bfca5a51" "5ca9d0a5971e42ecee31398533e5b9dfc01c61a69bf3fd69395aa189c792252e" "c77866b9ee1cc2fd95cfb55fe99813b95c10f620f51f210de96c8b8bdead4c46" default))
  '(exwm-floating-border-color "#413f42")
  '(fci-rule-color "#3E4451")
  '(highlight-indent-guides-method 'character)
@@ -678,48 +736,48 @@
  '(livedown-port 1337)
  '(objed-cursor-color "#CC6666")
  '(org-capture-templates
-   '(("s" "structure" table-line
-      (file "~/org/structure.org")
-      "")
-     ("n" "notes" entry
-      (file "~/org/notes.org")
-      "* Notes %?")
-     ("t" "todo" entry
-      (file+headline "/home/krishna/.emacs.d/todo.org" "Tasks")
-      "* TODO [#A] %?")))
+    '(("s" "structure" table-line
+       (file "~/org/structure.org")
+       "")
+      ("n" "notes" entry
+       (file "~/org/notes.org")
+       "* Notes %?")
+      ("t" "todo" entry
+       (file+headline "/home/krishna/.emacs.d/todo.org" "Tasks")
+       "* TODO [#A] %?")))
  '(package-selected-packages
-   '(lsp-ui company cape corfu magit org-bullets denote treemacs vterm ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes svelte-mode atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm rust-mode yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
+    '(tree-sitter-langs tree-sitter centaur-tabs vscode-dark-plus-theme lsp-ui company cape corfu magit org-bullets denote treemacs vterm ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes svelte-mode atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm rust-mode yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
  '(pdf-view-midnight-colors '("#fdf4c1" . "#282828"))
  '(rustic-ansi-faces
-   ["#2D2A2E" "#CC6666" "#A9DC76" "#FFD866" "#78DCE8" "#FF6188" "#78DCE8" "#FCFCFA"])
+    ["#2D2A2E" "#CC6666" "#A9DC76" "#FFD866" "#78DCE8" "#FF6188" "#78DCE8" "#FCFCFA"])
  '(tetris-x-colors
-   [[229 192 123]
-    [97 175 239]
-    [209 154 102]
-    [224 108 117]
-    [152 195 121]
-    [198 120 221]
-    [86 182 194]])
+    [[229 192 123]
+     [97 175 239]
+     [209 154 102]
+     [224 108 117]
+     [152 195 121]
+     [198 120 221]
+     [86 182 194]])
  '(vc-annotate-background nil)
  '(vc-annotate-color-map
-   '((20 . "#cc6666")
-     (40 . "#de935f")
-     (60 . "#f0c674")
-     (80 . "#b5bd68")
-     (100 . "#8abeb7")
-     (120 . "#81a2be")
-     (140 . "#b294bb")
-     (160 . "#cc6666")
-     (180 . "#de935f")
-     (200 . "#f0c674")
-     (220 . "#b5bd68")
-     (240 . "#8abeb7")
-     (260 . "#81a2be")
-     (280 . "#b294bb")
-     (300 . "#cc6666")
-     (320 . "#de935f")
-     (340 . "#f0c674")
-     (360 . "#b5bd68")))
+    '((20 . "#cc6666")
+      (40 . "#de935f")
+      (60 . "#f0c674")
+      (80 . "#b5bd68")
+      (100 . "#8abeb7")
+      (120 . "#81a2be")
+      (140 . "#b294bb")
+      (160 . "#cc6666")
+      (180 . "#de935f")
+      (200 . "#f0c674")
+      (220 . "#b5bd68")
+      (240 . "#8abeb7")
+      (260 . "#81a2be")
+      (280 . "#b294bb")
+      (300 . "#cc6666")
+      (320 . "#de935f")
+      (340 . "#f0c674")
+      (360 . "#b5bd68")))
  '(vc-annotate-very-old-color nil))
 ;; (custom-set-faces
 ;; custom-set-faces was added by Custom.

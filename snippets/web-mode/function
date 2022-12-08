@@ -2,7 +2,7 @@
 # name: function
 # key: f
 # --
-const $1: () => $2 = ($3) => {
-  $4
+const $1 = ($2) => {
+  $3
 };
 

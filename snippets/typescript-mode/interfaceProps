@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: interfaceProps
+# key: ip
+# --
+interface Props {
+    $1
+}
