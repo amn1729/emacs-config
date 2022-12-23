@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: FC
+# key: fc
+# --
+FC <Props$1> 
