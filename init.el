@@ -129,10 +129,17 @@
   :config
   (global-hungry-delete-mode))
 
-;; simple modeline
-(use-package simple-modeline
+;; ;; simple modeline
+;; (use-package simple-modeline
+;;   :init
+;;   (simple-modeline-mode 1))
+
+;; mood modeline
+(use-package mood-line
   :init
-  (simple-modeline-mode 1))
+  (mood-line-mode)
+  :config
+  (setq mood-line-glyph-alist mood-line-glyphs-fira-code))
 
 ;; Treemacs
 (use-package treemacs
@@ -146,9 +153,9 @@
   :after (treemacs projectile))
 
 ;; Rust
-(use-package rust-mode
-  :init
-  (setq rust-format-on-save t))
+;; (use-package rust-mode
+;;   :init
+;;   (setq rust-format-on-save t))
 
 ;; Crystal
 ;; (use-package crystal-mode)
@@ -328,7 +335,7 @@
   :bind ("C-j" . emmet-expand-line))
 
 ;; Svelte
-(use-package svelte-mode)
+;; (use-package svelte-mode)
 
 (defun tsx-electric-lt (n)
   (interactive "p")
@@ -377,64 +384,64 @@
   (company-mode +1))
 
 ;; Lsp , tree sitter, tsx
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :config
-  (lsp-enable-which-key-integration t)
-  (setq lsp-headerline-breadcrumb-enable nil))
+;; (use-package lsp-mode
+;;   :commands (lsp lsp-deferred)
+;;   :config
+;;   (lsp-enable-which-key-integration t)
+;;   (setq lsp-headerline-breadcrumb-enable nil))
 
 ;; (use-package lsp-ui)
 
-(use-package tree-sitter
-  :ensure t
-  :diminish tree-sitter-mode
-  :config
-  ;; activate tree-sitter on any buffer containing code for which it has a parser available
-  (global-tree-sitter-mode)
-  ;; you can easily see the difference tree-sitter-hl-mode makes for python, ts or tsx
-  ;; by switching on and off
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+;; (use-package tree-sitter
+;;   :ensure t
+;;   :diminish tree-sitter-mode
+;;   :config
+;;   ;; activate tree-sitter on any buffer containing code for which it has a parser available
+;;   (global-tree-sitter-mode)
+;;   ;; you can easily see the difference tree-sitter-hl-mode makes for python, ts or tsx
+;;   ;; by switching on and off
+;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
-(use-package tree-sitter-langs
-  :ensure t
-  :after tree-sitter)
-
-;; (use-package typescript-mode
-;;   :after tree-sitter
-;;   :mode ("\\.ts\\'" "\\.tsx\\'")
-;;   :hook ((typescript-mode . tsi-typescript-mode)
-;;          (typescript-mode . tsx-mode)))
-;; (add-hook 'typescript-mode-hook (lambda () (setq-local lsp-mode -1)))
-
+;; (use-package tree-sitter-langs
+;;   :ensure t
+;;   :after tree-sitter)
 
 (use-package typescript-mode
-  :after tree-sitter
-  :hook ((typescript-mode . prettier-js-mode)
-         (typescript-mode . setup-tide-mode))
-  :config
-  ;; we choose this instead of tsx-mode so that eglot can automatically figure out language for server
-  ;; see https://github.com/joaotavora/eglot/issues/624 and https://github.com/joaotavora/eglot#handling-quirky-servers
-  (define-derived-mode typescriptreact-mode typescript-mode
-    "TypeScript TSX")
+  ;; :after tree-sitter
+  :mode ("\\.ts\\'" "\\.tsx\\'")
+  :hook ((typescript-mode . setup-tide-mode)
+         (typescript-mode . prettier-js-mode)))
 
-  ;; use our derived mode for tsx files
-  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
-  ;; by default, typescript-mode is mapped to the treesitter typescript parser
-  ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
-  (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx)))
-(add-hook 'typescriptreact-mode-hook (lambda ()
-                                       (when (string-equal "tsx" (file-name-extension buffer-file-name))
-                                         (web-mode +1)
-                                         ;; (setq-local comment-use-syntax nil)
-                                         ;; (setq-local comment-start-skip "[[:space:]]*\\(//+\\|{?/\\*+\\)")
-                                         ;; (setq-local comment-end-skip "\\(\\*+/}?[[:space:]]*\\)\n?\\|\n")
-                                         ;; (setq-local comment-start "{/\*")
-                                         ;; (setq-local comment-end   "\*/}")
-                                         (define-key typescript-mode-map "<" 'tsx-electric-lt))))
+
+;; (use-package typescript-mode
+;;   ;; :after tree-sitter
+;;   :hook ((typescript-mode . prettier-js-mode)
+;;          (typescript-mode . setup-tide-mode))
+;;   :config
+;;   ;; we choose this instead of tsx-mode so that eglot can automatically figure out language for server
+;;   ;; see https://github.com/joaotavora/eglot/issues/624 and https://github.com/joaotavora/eglot#handling-quirky-servers
+;;   (define-derived-mode typescriptreact-mode typescript-mode
+;;     "TypeScript TSX")
+
+;;   ;; use our derived mode for tsx files
+;;   (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
+;;   ;; by default, typescript-mode is mapped to the treesitter typescript parser
+;;   ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
+;;   (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx)))
+;; (add-hook 'typescriptreact-mode-hook (lambda ()
+;;                                        (when (string-equal "tsx" (file-name-extension buffer-file-name))
+;;                                          (web-mode +1)
+;;                                          ;; (setq-local comment-use-syntax nil)
+;;                                          ;; (setq-local comment-start-skip "[[:space:]]*\\(//+\\|{?/\\*+\\)")
+;;                                          ;; (setq-local comment-end-skip "\\(\\*+/}?[[:space:]]*\\)\n?\\|\n")
+;;                                          ;; (setq-local comment-start "{/\*")
+;;                                          ;; (setq-local comment-end   "\*/}")
+;;                                          (define-key typescript-mode-map "<" 'tsx-electric-lt))))
 
 
 ;; ;; Web mode
 (use-package web-mode
+    :hook (web-mode . prettier-js-mode)
   :mode (("\\.html?\\'" . web-mode)
          ("\\.tsx\\'" . web-mode))
   :init
@@ -473,11 +480,7 @@
 (use-package prettier-js
   :after (:any rjsx-mode svelte-mode)
   :hook ((rjsx-mode . prettier-js-mode)
-	     (web-mode . prettier-js-mode)
-	     (tide-mode . prettier-js-mode)
-	     (typescriptreact-mode . prettier-js-mode)
-	     (tsx-mode . prettier-js-mode)
-	     (svelte-mode . prettier-js-mode))
+	     (tide-mode . prettier-js-mode))
   ;; :config
   ;; (add-hook 'rjsx-mode-hook (lambda()
   ;;                             (flycheck-add-mode 'javascript-eslint 'rjsx-mode)))
@@ -770,9 +773,6 @@
 ;; (global-set-key (kbd "C-c t") 'modus-themes-toggle)
 (global-set-key (kbd "C-c t") 'ef-themes-toggle)
 
-
-;; (load-theme 'vscode-dark-plus t)
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -811,7 +811,7 @@
       (file+headline "/home/krishna/.emacs.d/todo.org" "Tasks")
       "* TODO [#A] %?")))
  '(package-selected-packages
-   '(consult consult-projectile vertico coverlay origami tree-sitter-langs tree-sitter centaur-tabs vscode-dark-plus-theme lsp-ui company cape corfu magit org-bullets denote treemacs vterm ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes svelte-mode atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm rust-mode yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
+   '(mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
  '(pdf-view-midnight-colors '("#fdf4c1" . "#282828"))
  '(rustic-ansi-faces
    ["#2D2A2E" "#CC6666" "#A9DC76" "#FFD866" "#78DCE8" "#FF6188" "#78DCE8" "#FCFCFA"])

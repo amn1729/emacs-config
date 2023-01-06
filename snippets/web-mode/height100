@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: height100
+# key: hf
+# --
+ height: "100%" $0
