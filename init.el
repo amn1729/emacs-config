@@ -192,7 +192,7 @@
   (dashboard-setup-startup-hook)
   ;; (setq dashboard-startup-banner 'logo)
   ;; (setq dashboard-startup-banner "/home/krishna/.emacs.d/black_hole.png")
-  (setq dashboard-startup-banner "/home/krishna/.emacs.d/gnu.png")
+  (setq dashboard-startup-banner "/home/krishna/.emacs.d/gnu-2.png")
   (setq dashboard-center-content t)
   (setq dashboard-items '((recents . 6)
 			              (projects . 12)))
@@ -763,12 +763,12 @@
 (setq modus-themes-syntax '(alt-syntax))
 ;; (load-theme 'modus-operandi t)
 
-(setq ef-themes-to-toggle '(ef-bio ef-spring))
+(setq ef-themes-to-toggle '(ef-trio-dark ef-trio-light))
 ;; (setq ef-themes-to-toggle '(ef-trio-light ef-autumn))
 
 ;; ;; (load-theme 'ef-summer t)
 ;; ;; (load-theme 'ef-winter t)
-(ef-themes-select 'ef-bio)
+(ef-themes-select 'ef-trio-dark)
 
 ;; (global-set-key (kbd "C-c t") 'modus-themes-toggle)
 (global-set-key (kbd "C-c t") 'ef-themes-toggle)
