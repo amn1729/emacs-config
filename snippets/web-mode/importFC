@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: importFC
+# key: ifc
+# --
+import { FC, } from "react";
