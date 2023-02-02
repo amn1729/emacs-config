@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: indexExport
+# key: ;ie
+# --
+export { default as ${1:$(yas-text)} } from "./$1";$0

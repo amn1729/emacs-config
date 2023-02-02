@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: sx  
-# key: sx
+# key: ;sx
 # --
 sx={{ $1 }}

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: mapArrowFunction
+# key: ;mf
+# --
+($1 : ${2:any}) => ($3)

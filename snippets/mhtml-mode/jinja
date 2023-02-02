@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
     # name: jinja
-    # key: %
+    # key: ;%
     # --
 {% $1 %}

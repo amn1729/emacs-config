@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: setTimeout
-# key: st
+# key: ;st
 # --
 setTimeout(() => {
 $2

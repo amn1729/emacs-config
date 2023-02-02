@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: importFC
-# key: ifc
+# key: ;ifc
 # --
-import { FC, } from "react";
+import { FC, $1 } from "react";

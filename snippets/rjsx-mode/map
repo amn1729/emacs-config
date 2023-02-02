@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: map
-# key: map
+# key: ;map
 # --
 {
 $1.map(($2, index)=>(

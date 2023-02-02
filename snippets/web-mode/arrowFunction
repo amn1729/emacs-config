@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: arrowFunction
-# key: af
+# key: ;af
 # --
 ($1: any$2) => { $3 }

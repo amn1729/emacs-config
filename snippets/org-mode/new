@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: new
-# key: new
+# key: ;new
 # --
 * $1
   * source code

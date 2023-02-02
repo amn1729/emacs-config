@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: useEffect
-# key: ue
+# key: ;ue
 # --
 useEffect(() => {
     $1

@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: importUseSate
-# key: ius
+# key: ;ius
 # --
 import { useState$1 } from "react";
 

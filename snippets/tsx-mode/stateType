@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: statePropTypes
-# key: sp
+# key: ;sp
 # --
 $1: any;
 set${1:$(capitalize-first-char yas-text)}: (val: any) => void;

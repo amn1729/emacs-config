@@ -1,8 +1,8 @@
 # -*- mode: rsjx -*-
 # name: component
-# key: c
+# key: ;c
 # --
-const $1 = ($2) => {
+const ${1:`(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`} = ($2) => {
   return (
     $3
   );

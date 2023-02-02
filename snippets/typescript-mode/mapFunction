@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: mapFunction
+# key: ;mf
+# --
+(${1:item} : ${2:any}) => ($3)

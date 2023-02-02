@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: argsInterface
+# key: ;ia
+# --
+interface ${1:Args} {
+    $0
+}

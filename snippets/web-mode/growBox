@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: growBox
-# key: gb
+# key: ;gb
 # --
 <Box sx={{ flexGrow: 1 $0}} />
