@@ -2,4 +2,4 @@
 # name: growBox
 # key: ;gb
 # --
-<Box sx={{ flexGrow: 1 $0}} />
+<Box flexGrow={1} />

@@ -600,12 +600,6 @@
       (meow-replace)
     (replace-char)))
 
-(defun my-meow-find-backward ()
-  (interactive)
-  (meow-join +1)
-  (meow-cancel-selection)
-  (call-interactively 'meow-find))
-
 ;; yasnippets
 (use-package yasnippet
   :config
@@ -713,7 +707,6 @@
    '("e" . meow-next-word)
    '("E" . meow-next-symbol)
    '("f" . meow-find)
-   '("F" . my-meow-find-backward)
    '("g" . meow-cancel-selection)
    '("G" . meow-grab)
    '("h" . meow-left)

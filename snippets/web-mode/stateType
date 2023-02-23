@@ -2,5 +2,5 @@
 # name: statePropTypes
 # key: ;sp
 # --
-$1: any;
-set${1:$(capitalize-first-char yas-text)}: (val: any) => void;
+$1: ${2:any};
+set${1:$(capitalize-first-char yas-text)}: (val: $2) => void;

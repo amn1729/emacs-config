@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: typeBoolean
+# key: ;tb
+# --
+: boolean;

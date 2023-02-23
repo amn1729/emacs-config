@@ -1,0 +1,17 @@
+# -*- mode: web -*-
+# name: componentWithProps
+# key: ;cp
+# --
+import { FC } from "react";
+
+interface Props {
+    $2
+}
+
+const ${1:`(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`} : FC <Props> = ({$3}) => {
+  return (
+    $0
+  );
+};
+
+export default $1;

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: alignItemsCenter
+# key: ;aic
+# --
+alignItems="center" 
