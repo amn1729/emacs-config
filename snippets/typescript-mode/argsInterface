@@ -2,6 +2,6 @@
 # name: argsInterface
 # key: ;ia
 # --
-interface ${1:Args} {
+interface ${1:Params} {
     $0
 }

@@ -32,6 +32,10 @@
 ;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/tsx-mode.el-master"))
 ;; (require 'tsx-mode)
 ;; (tsx-mode t)
+;; init.el
+
+;; for terminals
+;; (set-face-background 'default "undefined")
 
 ;; Basic
 (menu-bar-mode -1)
@@ -850,15 +854,4 @@
      (340 . "#f0c674")
      (360 . "#b5bd68")))
  '(vc-annotate-very-old-color nil))
-;; (custom-set-faces
-;; custom-set-faces was added by Custom.
-;; If you edit it by hand, you could mess it up, so be careful.
-;; Your init file should contain only one such instance.
-;; If there is more than one, they won't work right.
-;; '(default ((t (:inherit nil :extend nil :stipple nil :background "#20202a" :foreground "#ABB2BF" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 113 :width normal :foundry "CTDB" :family "JetBrains Mono")))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
