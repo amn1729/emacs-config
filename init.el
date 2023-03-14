@@ -71,6 +71,7 @@
 ;; (set-frame-parameter (selected-frame) 'alpha 86)
 ;; (add-to-list 'default-frame-alist '(alpha 86))
 
+
 ;; Diminish
 (use-package diminish)
 
@@ -768,20 +769,39 @@
 
 ;; theme setting
 (mapc #'disable-theme custom-enabled-themes)
-(setq modus-themes-mode-line '(borderless accented))
-(setq modus-themes-region '(bg-only))
-(setq modus-themes-syntax '(alt-syntax))
-;; (load-theme 'modus-operandi t)
 
-(setq ef-themes-to-toggle '(ef-trio-dark ef-trio-light))
+;; (setq ef-themes-to-toggle '(ef-trio-dark ef-trio-light))
 ;; (setq ef-themes-to-toggle '(ef-trio-light ef-autumn))
 
 ;; ;; (load-theme 'ef-summer t)
 ;; ;; (load-theme 'ef-winter t)
-(ef-themes-select 'ef-trio-dark)
+;; (ef-themes-select 'ef-trio-dark)
 
 ;; (global-set-key (kbd "C-c t") 'modus-themes-toggle)
 (global-set-key (kbd "C-c t") 'ef-themes-toggle)
+(use-package modus-themes
+  :config
+  ;; Add all your customizations prior to loading the themes
+  (setq modus-themes-italic-constructs t
+        modus-themes-bold-constructs nil)
+  ;; Maybe define some palette overrides, such as by using our presets
+  (setq modus-themes-common-palette-overrides
+        '(
+          (bg-mode-line-active bg-blue-subtle)
+          (fringe unspecified)
+          (fg-mode-line-active fg-main)
+          (bg-region bg-ochre) ; try to replace `bg-ochre' with `bg-lavender', `bg-sage'
+          (fg-region unspecified)
+          (fg-line-number-inactive "gray50")
+          (fg-line-number-active fg-main)
+          (bg-line-number-inactive unspecified)
+          (bg-line-number-active unspecified)
+          (border-mode-line-active unspecified)
+          (border-mode-line-inactive unspecified)))
+  :bind
+  ("<f5>" . modus-themes-toggle))
+  ;; Load the theme of your choice.
+  (load-theme 'modus-vivendi t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -795,7 +815,7 @@
  '(company-quickhelp-color-background "#3E4452")
  '(company-quickhelp-color-foreground "#ABB2BF")
  '(custom-safe-themes
-   '("e09401ab2c457e2e4d8b800e1c546dbc8339dc33b2877836ba5d9b6294ae6e55" "d2b7abf3fb8e9505a478a04bd6d727a029cab49d58c0fafe271293d095438067" "6976ce7d103d13c56a79cd0305f743ac880dafd52124a05f7163f51bca84e256" "22c213e81a533c259127302ef1e0f2d1f332df83969a1f9cf6d5696cbe789543" "3741b7bfab715b2e62d12ed0b129c6f8345d60f056fce2c0a5de24822876f854" "935cd704a3b4b12c9c0582da1d25437e2802d0f82c5d46de0eb5a968dfad08da" "347313c47366c3cb305fb63dff7df87426061d5529a86c215086fe8581228733" "2a0669753764cc15b818fc882d271fc30850d5a45220a499fb9d835846001b7c" "4e7672ce1015731d9d6955652f8f1b438420f109d15f662a014fa4e992429b9a" "45611797b789abf53e97c43b29c7f10dd6f18971e238e700bc885e702531053a" "04a9d8ab1ba3288f88018d1a2ba84be4c21a3b3c0b479005ac2b2ee7d417caa3" "931ee45708e894d5233fc4a94ae0065c765c1a0aeb1bd8d9feee22f5622f44b4" "9dbd2c6f93cc1774c261f23042be8bf7decc8f6599c21189c04d7791231b2b79" "c01cd0485ce35cf0a19ab91146d2c2b6528ec60ad4c8ffec5b2b7cc4bc05bd80" "01f52ed4dc9cfd4f397eda57c9eb5fea360bd6c18a2684121cc47279bfca5a51" "5ca9d0a5971e42ecee31398533e5b9dfc01c61a69bf3fd69395aa189c792252e" "c77866b9ee1cc2fd95cfb55fe99813b95c10f620f51f210de96c8b8bdead4c46" default))
+   '("30dc9873c16a0efb187bb3f8687c16aae46b86ddc34881b7cae5273e56b97580" "dde643b0efb339c0de5645a2bc2e8b4176976d5298065b8e6ca45bc4ddf188b7" "bfc0b9c3de0382e452a878a1fb4726e1302bf9da20e69d6ec1cd1d5d82f61e3d" "e09401ab2c457e2e4d8b800e1c546dbc8339dc33b2877836ba5d9b6294ae6e55" "d2b7abf3fb8e9505a478a04bd6d727a029cab49d58c0fafe271293d095438067" "6976ce7d103d13c56a79cd0305f743ac880dafd52124a05f7163f51bca84e256" "22c213e81a533c259127302ef1e0f2d1f332df83969a1f9cf6d5696cbe789543" "3741b7bfab715b2e62d12ed0b129c6f8345d60f056fce2c0a5de24822876f854" "935cd704a3b4b12c9c0582da1d25437e2802d0f82c5d46de0eb5a968dfad08da" "347313c47366c3cb305fb63dff7df87426061d5529a86c215086fe8581228733" "2a0669753764cc15b818fc882d271fc30850d5a45220a499fb9d835846001b7c" "4e7672ce1015731d9d6955652f8f1b438420f109d15f662a014fa4e992429b9a" "45611797b789abf53e97c43b29c7f10dd6f18971e238e700bc885e702531053a" "04a9d8ab1ba3288f88018d1a2ba84be4c21a3b3c0b479005ac2b2ee7d417caa3" "931ee45708e894d5233fc4a94ae0065c765c1a0aeb1bd8d9feee22f5622f44b4" "9dbd2c6f93cc1774c261f23042be8bf7decc8f6599c21189c04d7791231b2b79" "c01cd0485ce35cf0a19ab91146d2c2b6528ec60ad4c8ffec5b2b7cc4bc05bd80" "01f52ed4dc9cfd4f397eda57c9eb5fea360bd6c18a2684121cc47279bfca5a51" "5ca9d0a5971e42ecee31398533e5b9dfc01c61a69bf3fd69395aa189c792252e" "c77866b9ee1cc2fd95cfb55fe99813b95c10f620f51f210de96c8b8bdead4c46" default))
  '(exwm-floating-border-color "#413f42")
  '(fci-rule-color "#3E4451")
  '(highlight-indent-guides-method 'character)
@@ -855,3 +875,9 @@
      (360 . "#b5bd68")))
  '(vc-annotate-very-old-color nil))
 
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
