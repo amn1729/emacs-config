@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: fragment
+# key: ;F
+# --
+<Fragment>
+    $0
+</Fragment>

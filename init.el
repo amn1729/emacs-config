@@ -777,7 +777,6 @@
 ;; ;; (load-theme 'ef-winter t)
 ;; (ef-themes-select 'ef-trio-dark)
 
-;; (global-set-key (kbd "C-c t") 'modus-themes-toggle)
 (global-set-key (kbd "C-c t") 'ef-themes-toggle)
 (use-package modus-themes
   :config
@@ -787,10 +786,10 @@
   ;; Maybe define some palette overrides, such as by using our presets
   (setq modus-themes-common-palette-overrides
         '(
-          (bg-mode-line-active bg-blue-subtle)
+          (bg-mode-line-active bg-graph-cyan-1)
           (fringe unspecified)
           (fg-mode-line-active fg-main)
-          (bg-region bg-ochre) ; try to replace `bg-ochre' with `bg-lavender', `bg-sage'
+          (bg-region bg-lavender) ; try to replace `bg-ochre' with `bg-lavender', `bg-sage'
           (fg-region unspecified)
           (fg-line-number-inactive "gray50")
           (fg-line-number-active fg-main)
@@ -841,7 +840,7 @@
       (file+headline "/home/krishna/.emacs.d/todo.org" "Tasks")
       "* TODO [#A] %?")))
  '(package-selected-packages
-   '(ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
+   '(string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
  '(pdf-view-midnight-colors '("#fdf4c1" . "#282828"))
  '(rustic-ansi-faces
    ["#2D2A2E" "#CC6666" "#A9DC76" "#FFD866" "#78DCE8" "#FF6188" "#78DCE8" "#FCFCFA"])
