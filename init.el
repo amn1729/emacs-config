@@ -71,6 +71,10 @@
 ;; (set-frame-parameter (selected-frame) 'alpha 86)
 ;; (add-to-list 'default-frame-alist '(alpha 86))
 
+;; Abbreviation
+;; (abbrev-table-put global-abbrev-table :case-fixed t)
+(dolist (table abbrev-table-name-list)
+    (abbrev-table-put (symbol-value table) :case-fixed t))
 
 ;; Diminish
 (use-package diminish)
@@ -466,6 +470,7 @@
   (add-hook 'web-mode-hook (lambda ()
                              (when (string-equal "tsx" (file-name-extension buffer-file-name))
                                (setup-tide-mode)
+                               (abbrev-mode)
                                (define-key web-mode-map "<" 'tsx-electric-lt))))
   :config
   (setq web-mode-markup-indent-offset 2
@@ -873,10 +878,9 @@
      (340 . "#f0c674")
      (360 . "#b5bd68")))
  '(vc-annotate-very-old-color nil))
-
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:inherit nil :extend nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 135 :width normal :foundry "UKWN" :family "Iosevka Term SS04")))))
