@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: userAvatar
+# key: ;ua
+# --
+<UserAvatar name={$1} />

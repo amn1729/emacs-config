@@ -2,8 +2,6 @@
 # name: map
 # key: ;map
 # --
-{
-$1.map(($2:${3:any}, idx: number)=>(
-$4
-))
-}
+{$1.map(($2)=>(
+$3
+))}

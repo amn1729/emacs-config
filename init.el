@@ -72,6 +72,7 @@
 ;; (add-to-list 'default-frame-alist '(alpha 86))
 
 ;; Abbreviation
+(setq-default abbrev-mode t)      
 ;; (abbrev-table-put global-abbrev-table :case-fixed t)
 (dolist (table abbrev-table-name-list)
     (abbrev-table-put (symbol-value table) :case-fixed t))
@@ -395,8 +396,8 @@
 (defun setup-tide-mode ()
   (interactive)
   (tide-setup)
-  ;; (flycheck-mode +1)
-  ;; (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
   (eldoc-mode +1)
   (tide-hl-identifier-mode +1)
   ;; company is an optional dependency. You have to
@@ -791,7 +792,7 @@
   ;; Maybe define some palette overrides, such as by using our presets
   (setq modus-themes-common-palette-overrides
         '(
-          (bg-mode-line-active bg-graph-cyan-1)
+          (bg-mode-line-active bg-magenta-intense)
           (fringe unspecified)
           (fg-mode-line-active fg-main)
           (bg-region bg-lavender) ; try to replace `bg-ochre' with `bg-lavender', `bg-sage'
@@ -806,6 +807,7 @@
   ("<f5>" . modus-themes-toggle))
   ;; Load the theme of your choice.
   (load-theme 'modus-vivendi t)
+;; (load-theme 'ef-elea-dark t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -883,4 +885,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 135 :width normal :foundry "UKWN" :family "Iosevka Term SS04")))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 125 :width normal :foundry "UKWN" :family "Iosevka Comfy")))))
