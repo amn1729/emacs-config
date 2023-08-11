@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: destructure
+# key: ;d
+# --
+
+const { $2 } = $1;
+$0

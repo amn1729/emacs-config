@@ -1,0 +1,9 @@
+# -*- mode: rsjx -*-
+# name: componentFunction
+# key: ;ff
+# --
+function ${1:`(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`}($2) $3 {
+    $0
+};
+
+export default $1;

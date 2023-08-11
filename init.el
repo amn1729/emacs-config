@@ -237,11 +237,11 @@
 ;; Projectile
 (use-package projectile
   :init
-  (setq projectile-sort-order 'acces-time)
-  ;; (setq projectile-indexing-method 'alien)
-  :config
-  (define-key projectile-mode-map (kbd "C-x p") 'projectile-command-map)
   (projectile-mode 1)
+  :config
+  (setq projectile-indexing-method 'hybrid)
+  (setq projectile-sort-order 'access-time)
+  (define-key projectile-mode-map (kbd "C-x p") 'projectile-command-map)
   :bind
   ("C-z" . 'projectile-find-file))
 
@@ -344,6 +344,26 @@
 ;; Multiple-cursors
 (use-package multiple-cursors
   :bind ("C-;" . 'mc/mark-next-like-this))
+
+;; yasnippets
+(use-package yasnippet
+  :config
+  (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+  (yas-global-mode 1))
+
+;; auto-yasnippets
+(use-package auto-yasnippet
+  :bind
+  ("C-c C-y w" . #'aya-create)
+  ("C-c C-y TAB" . #'aya-expand)
+  ("C-c C-y SPC" . #'aya-expand-from-history)
+  ("C-c C-y d" . #'aya-delete-from-history)
+  ("C-c C-y c" . #'aya-clear-history)
+  ("C-c C-y n" . #'aya-next-in-history)
+  ("C-c C-y p" . #'aya-previous-in-history)
+  ("C-c C-y s" . #'aya-persist-snippet)
+  ("C-c C-y o" . #'aya-open-line))
+
 
 ;; Web dev
 ;; emmet
@@ -611,11 +631,6 @@
       (meow-replace)
     (replace-char)))
 
-;; yasnippets
-(use-package yasnippet
-  :config
-  (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
-  (yas-global-mode 1))
 
 ;; Custom shortcuts
 
@@ -792,7 +807,7 @@
   ;; Maybe define some palette overrides, such as by using our presets
   (setq modus-themes-common-palette-overrides
         '(
-          (bg-mode-line-active bg-magenta-intense)
+          ;; (bg-mode-line-active bg-magenta-intense)
           (fringe unspecified)
           (fg-mode-line-active fg-main)
           (bg-region bg-lavender) ; try to replace `bg-ochre' with `bg-lavender', `bg-sage'
@@ -806,7 +821,7 @@
   :bind
   ("<f5>" . modus-themes-toggle))
   ;; Load the theme of your choice.
-  (load-theme 'modus-vivendi t)
+  (load-theme 'modus-vivendi-tinted t)
 ;; (load-theme 'ef-elea-dark t)
 
 (custom-set-variables
@@ -847,7 +862,7 @@
       (file+headline "/home/krishna/.emacs.d/todo.org" "Tasks")
       "* TODO [#A] %?")))
  '(package-selected-packages
-   '(string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
+   '(auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
  '(pdf-view-midnight-colors '("#fdf4c1" . "#282828"))
  '(rustic-ansi-faces
    ["#2D2A2E" "#CC6666" "#A9DC76" "#FFD866" "#78DCE8" "#FF6188" "#78DCE8" "#FCFCFA"])
