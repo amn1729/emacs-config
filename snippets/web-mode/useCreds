@@ -2,5 +2,5 @@
 # name: useCreds
 # key: ;uc
 # --
-const { cred$0 } = useCreds();
+const { cred$0 } = useCreds($1);
     

@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: importCommon
-# key: ;ic
+# key: ;iac
 # --
 import { $2 } from "app/Common";

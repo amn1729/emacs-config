@@ -170,6 +170,10 @@
 (use-package treemacs-projectile
   :after (treemacs projectile))
 
+(use-package treemacs-all-the-icons
+  :init
+  (treemacs-load-theme "all-the-icons"))
+
 ;; Rust
 ;; (use-package rust-mode
 ;;   :init
@@ -862,7 +866,7 @@
       (file+headline "/home/krishna/.emacs.d/todo.org" "Tasks")
       "* TODO [#A] %?")))
  '(package-selected-packages
-   '(auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
+   '(treemacs-all-the-icons auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
  '(pdf-view-midnight-colors '("#fdf4c1" . "#282828"))
  '(rustic-ansi-faces
    ["#2D2A2E" "#CC6666" "#A9DC76" "#FFD866" "#78DCE8" "#FF6188" "#78DCE8" "#FCFCFA"])

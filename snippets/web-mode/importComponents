@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: importComponents
+# key: ;ic
+# --
+import { $1 } from "components";$0
