@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: center
+# key: ;C
+# --
+<Center $1>
+    $2
+</Center>

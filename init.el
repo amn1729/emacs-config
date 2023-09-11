@@ -71,11 +71,48 @@
 ;; (set-frame-parameter (selected-frame) 'alpha 86)
 ;; (add-to-list 'default-frame-alist '(alpha 86))
 
+    ;; theme setting
+(mapc #'disable-theme custom-enabled-themes)
+
+;; (setq ef-themes-to-toggle '(ef-trio-dark ef-trio-light))
+;; (setq ef-themes-to-toggle '(ef-trio-light ef-autumn))
+
+;; ;; (load-theme 'ef-summer t)
+;; ;; (load-theme 'ef-winter t)
+;; (ef-themes-select 'ef-trio-dark)
+
+(global-set-key (kbd "C-c t") 'ef-themes-toggle)
+(use-package modus-themes
+  :config
+  ;; Add all your customizations prior to loading the themes
+  (setq modus-themes-italic-constructs t
+        modus-themes-bold-constructs nil)
+  ;; Maybe define some palette overrides, such as by using our presets
+  (setq modus-themes-common-palette-overrides
+        '(
+          ;; (bg-mode-line-active bg-magenta-intense)
+          (fringe unspecified)
+          (fg-mode-line-active fg-main)
+          (bg-region bg-lavender) ; try to replace `bg-ochre' with `bg-lavender', `bg-sage'
+          (fg-region unspecified)
+          (fg-line-number-inactive "gray50")
+          (fg-line-number-active fg-main)
+          (bg-line-number-inactive unspecified)
+          (bg-line-number-active unspecified)
+          (border-mode-line-active unspecified)
+          (border-mode-line-inactive unspecified)))
+  :bind
+  ("<f5>" . modus-themes-toggle))
+  ;; Load the theme of your choice.
+  (load-theme 'modus-vivendi-tinted t)
+;; (load-theme 'ef-elea-dark t)
+
 ;; Abbreviation
 (setq-default abbrev-mode t)      
 ;; (abbrev-table-put global-abbrev-table :case-fixed t)
 (dolist (table abbrev-table-name-list)
     (abbrev-table-put (symbol-value table) :case-fixed t))
+
 
 ;; Diminish
 (use-package diminish)
@@ -382,7 +419,7 @@
 ;; Origami
 (use-package origami
   :init (global-origami-mode)
-  :bind ("C-c u" . origami-toggle-node))
+  :bind ("C-c C-u f" . origami-toggle-node))
 
 (defun tsx-electric-lt (n)
   (interactive "p")
@@ -545,6 +582,64 @@
 ;;   :hook (python-mode . py-autopep8-enable-on-save))
 
 ;; Custom functions
+(defun wrap-in-type (name &optional add-comma?)
+  (meow-mark-symbol 1)
+  (if add-comma?
+      (insert ", "))
+  (insert ">")
+  (backward-char 4)
+  (meow-reverse)
+  (insert name "<")
+  (forward-char 1)
+  (meow-mark-symbol 1)
+  (if add-comma?
+    (forward-char 2))
+  (meow-cancel-selection))
+
+(defun wrap-in-omit ()
+  (interactive)
+  (wrap-in-type "Omit" t))
+
+(defun wrap-in-pick ()
+  (interactive)
+  (wrap-in-type "Pick" t))
+
+(defun wrap-in-array ()
+  (interactive)
+  (wrap-in-type "Array"))
+
+(defun wrap-with-angle-brackets ()
+  (interactive)
+  (wrap-in-type ""))
+
+(global-set-key (kbd "C-c u o") 'wrap-in-omit)
+(global-set-key (kbd "C-c u p") 'wrap-in-pick)
+(global-set-key (kbd "C-c u a") 'wrap-in-array)
+(global-set-key (kbd "C-c u t") 'wrap-with-angle-brackets)
+
+(defun wrap-in-hooks (beg end hook)
+  (interactive "r")
+  (save-excursion
+    (narrow-to-region beg end)
+    (set-mark nil)
+    (goto-char (point-min))
+    (insert "use" hook "(\n\t() => ")
+    (goto-char (point-max))
+    (insert ",\n\t[]\n)")
+    (widen)))
+
+(defun wrap-in-use-memo (beg end)
+  (interactive "r")
+  (funcall (wrap-in-hooks beg end "Memo")))
+(global-set-key (kbd "C-c u m") 'wrap-in-use-memo)
+
+(defalias 'remove-useless-braces
+   (kmacro "C-s { \" <return> <left> <backspace> C-s \" } <return> <backspace>"))
+(global-set-key (kbd "C-c u r") 'remove-useless-braces)
+
+(defalias 'end-delete
+   (kmacro "C-e C-d"))
+
 (defun projectile-find-file-in-current-directory ()
   (interactive)
 (projectile-find-file-in-directory (file-name-directory buffer-file-name)))
@@ -635,7 +730,6 @@
       (meow-replace)
     (replace-char)))
 
-
 ;; Custom shortcuts
 
 ;; avy copy line
@@ -649,6 +743,9 @@
 
 ;; avy move region
 (global-set-key (kbd "C-c w") 'avy-move-region)
+
+;; avy move region
+(global-set-key (kbd "C-c f") 'goto-char-2-right)
 
 ;; ;; exit insert mode
 ;; (global-set-key (kbd "C-z") (kbd "<escape>"))
@@ -686,7 +783,6 @@
 
 ;; yas-expand
 (global-set-key (kbd "C-o") 'yas-expand)
-
 
 ;; Meow setup
 (defun meow-setup ()
@@ -776,9 +872,11 @@
    ;; my shortcuts
    '("\\" . comment-line)
    '("/" . "M-s")
+   '("=" . end-delete)
    ;; my shortcuts ends
    '("<escape>" . mode-line-other-buffer))
-  )
+    (meow-thing-register 'angle '(regexp "<" ">") '(regexp "<" ">"))
+    (add-to-list 'meow-char-thing-table '(?a . angle)))
 
 (require 'meow)
 (meow-setup)
@@ -792,42 +890,6 @@
 (diminish 'yas-minor-mode)
 (diminish 'hungry-delete-mode)
 
-;; theme setting
-(mapc #'disable-theme custom-enabled-themes)
-
-;; (setq ef-themes-to-toggle '(ef-trio-dark ef-trio-light))
-;; (setq ef-themes-to-toggle '(ef-trio-light ef-autumn))
-
-;; ;; (load-theme 'ef-summer t)
-;; ;; (load-theme 'ef-winter t)
-;; (ef-themes-select 'ef-trio-dark)
-
-(global-set-key (kbd "C-c t") 'ef-themes-toggle)
-(use-package modus-themes
-  :config
-  ;; Add all your customizations prior to loading the themes
-  (setq modus-themes-italic-constructs t
-        modus-themes-bold-constructs nil)
-  ;; Maybe define some palette overrides, such as by using our presets
-  (setq modus-themes-common-palette-overrides
-        '(
-          ;; (bg-mode-line-active bg-magenta-intense)
-          (fringe unspecified)
-          (fg-mode-line-active fg-main)
-          (bg-region bg-lavender) ; try to replace `bg-ochre' with `bg-lavender', `bg-sage'
-          (fg-region unspecified)
-          (fg-line-number-inactive "gray50")
-          (fg-line-number-active fg-main)
-          (bg-line-number-inactive unspecified)
-          (bg-line-number-active unspecified)
-          (border-mode-line-active unspecified)
-          (border-mode-line-inactive unspecified)))
-  :bind
-  ("<f5>" . modus-themes-toggle))
-  ;; Load the theme of your choice.
-  (load-theme 'modus-vivendi-tinted t)
-;; (load-theme 'ef-elea-dark t)
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -840,7 +902,7 @@
  '(company-quickhelp-color-background "#3E4452")
  '(company-quickhelp-color-foreground "#ABB2BF")
  '(custom-safe-themes
-   '("30dc9873c16a0efb187bb3f8687c16aae46b86ddc34881b7cae5273e56b97580" "dde643b0efb339c0de5645a2bc2e8b4176976d5298065b8e6ca45bc4ddf188b7" "bfc0b9c3de0382e452a878a1fb4726e1302bf9da20e69d6ec1cd1d5d82f61e3d" "e09401ab2c457e2e4d8b800e1c546dbc8339dc33b2877836ba5d9b6294ae6e55" "d2b7abf3fb8e9505a478a04bd6d727a029cab49d58c0fafe271293d095438067" "6976ce7d103d13c56a79cd0305f743ac880dafd52124a05f7163f51bca84e256" "22c213e81a533c259127302ef1e0f2d1f332df83969a1f9cf6d5696cbe789543" "3741b7bfab715b2e62d12ed0b129c6f8345d60f056fce2c0a5de24822876f854" "935cd704a3b4b12c9c0582da1d25437e2802d0f82c5d46de0eb5a968dfad08da" "347313c47366c3cb305fb63dff7df87426061d5529a86c215086fe8581228733" "2a0669753764cc15b818fc882d271fc30850d5a45220a499fb9d835846001b7c" "4e7672ce1015731d9d6955652f8f1b438420f109d15f662a014fa4e992429b9a" "45611797b789abf53e97c43b29c7f10dd6f18971e238e700bc885e702531053a" "04a9d8ab1ba3288f88018d1a2ba84be4c21a3b3c0b479005ac2b2ee7d417caa3" "931ee45708e894d5233fc4a94ae0065c765c1a0aeb1bd8d9feee22f5622f44b4" "9dbd2c6f93cc1774c261f23042be8bf7decc8f6599c21189c04d7791231b2b79" "c01cd0485ce35cf0a19ab91146d2c2b6528ec60ad4c8ffec5b2b7cc4bc05bd80" "01f52ed4dc9cfd4f397eda57c9eb5fea360bd6c18a2684121cc47279bfca5a51" "5ca9d0a5971e42ecee31398533e5b9dfc01c61a69bf3fd69395aa189c792252e" "c77866b9ee1cc2fd95cfb55fe99813b95c10f620f51f210de96c8b8bdead4c46" default))
+   '("5a00018936fa1df1cd9d54bee02c8a64eafac941453ab48394e2ec2c498b834a" "249e100de137f516d56bcf2e98c1e3f9e1e8a6dce50726c974fa6838fbfcec6b" "06ed754b259cb54c30c658502f843937ff19f8b53597ac28577ec33bb084fa52" "e266d44fa3b75406394b979a3addc9b7f202348099cfde69e74ee6432f781336" "e8567ee21a39c68dbf20e40d29a0f6c1c05681935a41e206f142ab83126153ca" "a131602c676b904a5509fff82649a639061bf948a5205327e0f5d1559e04f5ed" "c95813797eb70f520f9245b349ff087600e2bd211a681c7a5602d039c91a6428" "2ce76d65a813fae8cfee5c207f46f2a256bac69dacbb096051a7a8651aa252b0" "11cc65061e0a5410d6489af42f1d0f0478dbd181a9660f81a692ddc5f948bf34" "9cd57dd6d61cdf4f6aef3102c4cc2cfc04f5884d4f40b2c90a866c9b6267f2b3" "74e2ed63173b47d6dc9a82a9a8a6a9048d89760df18bc7033c5f91ff4d083e37" "f00a605fb19cb258ad7e0d99c007f226f24d767d01bf31f3828ce6688cbdeb22" "6128465c3d56c2630732d98a3d1c2438c76a2f296f3c795ebda534d62bb8a0e3" "d516f1e3e5504c26b1123caa311476dc66d26d379539d12f9f4ed51f10629df3" "3c7a784b90f7abebb213869a21e84da462c26a1fda7e5bd0ffebf6ba12dbd041" "30dc9873c16a0efb187bb3f8687c16aae46b86ddc34881b7cae5273e56b97580" "dde643b0efb339c0de5645a2bc2e8b4176976d5298065b8e6ca45bc4ddf188b7" "bfc0b9c3de0382e452a878a1fb4726e1302bf9da20e69d6ec1cd1d5d82f61e3d" "e09401ab2c457e2e4d8b800e1c546dbc8339dc33b2877836ba5d9b6294ae6e55" "d2b7abf3fb8e9505a478a04bd6d727a029cab49d58c0fafe271293d095438067" "6976ce7d103d13c56a79cd0305f743ac880dafd52124a05f7163f51bca84e256" "22c213e81a533c259127302ef1e0f2d1f332df83969a1f9cf6d5696cbe789543" "3741b7bfab715b2e62d12ed0b129c6f8345d60f056fce2c0a5de24822876f854" "935cd704a3b4b12c9c0582da1d25437e2802d0f82c5d46de0eb5a968dfad08da" "347313c47366c3cb305fb63dff7df87426061d5529a86c215086fe8581228733" "2a0669753764cc15b818fc882d271fc30850d5a45220a499fb9d835846001b7c" "4e7672ce1015731d9d6955652f8f1b438420f109d15f662a014fa4e992429b9a" "45611797b789abf53e97c43b29c7f10dd6f18971e238e700bc885e702531053a" "04a9d8ab1ba3288f88018d1a2ba84be4c21a3b3c0b479005ac2b2ee7d417caa3" "931ee45708e894d5233fc4a94ae0065c765c1a0aeb1bd8d9feee22f5622f44b4" "9dbd2c6f93cc1774c261f23042be8bf7decc8f6599c21189c04d7791231b2b79" "c01cd0485ce35cf0a19ab91146d2c2b6528ec60ad4c8ffec5b2b7cc4bc05bd80" "01f52ed4dc9cfd4f397eda57c9eb5fea360bd6c18a2684121cc47279bfca5a51" "5ca9d0a5971e42ecee31398533e5b9dfc01c61a69bf3fd69395aa189c792252e" "c77866b9ee1cc2fd95cfb55fe99813b95c10f620f51f210de96c8b8bdead4c46" default))
  '(exwm-floating-border-color "#413f42")
  '(fci-rule-color "#3E4451")
  '(highlight-indent-guides-method 'character)
@@ -866,7 +928,7 @@
       (file+headline "/home/krishna/.emacs.d/todo.org" "Tasks")
       "* TODO [#A] %?")))
  '(package-selected-packages
-   '(treemacs-all-the-icons auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
+   '(kaolin-themes treemacs-all-the-icons auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
  '(pdf-view-midnight-colors '("#fdf4c1" . "#282828"))
  '(rustic-ansi-faces
    ["#2D2A2E" "#CC6666" "#A9DC76" "#FFD866" "#78DCE8" "#FF6188" "#78DCE8" "#FCFCFA"])
@@ -904,4 +966,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 125 :width normal :foundry "UKWN" :family "Iosevka Comfy")))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 130 :width normal :foundry "UKWN" :family "Iosevka Term SS04")))))
