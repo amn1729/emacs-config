@@ -202,7 +202,8 @@
   (:map global-map
 	    ("C-c \\" . treemacs))
   :config
-  (setq treemacs-project-follow-mode t))
+  (setq treemacs-project-follow-mode t)
+  (treemacs-load-all-the-icons-with-workaround-font "Victor Mono"))
 
 (use-package treemacs-projectile
   :after (treemacs projectile))
@@ -210,6 +211,12 @@
 (use-package treemacs-all-the-icons
   :init
   (treemacs-load-theme "all-the-icons"))
+
+;; Dired
+(use-package all-the-icons-dired
+  :hook (dired-mode . all-the-icons-dired-mode))
+;; (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+(add-hook 'dired-mode-hook 'dired-hide-details-mode)
 
 ;; Rust
 ;; (use-package rust-mode
@@ -465,6 +472,7 @@
   ;; install it separately via package-install
   ;; `M-x package-install [ret] company`
   (diminish tide-mode)
+  (define-key tide-mode-map (kbd "M-,") 'tide-references)
   (company-mode +1))
 
 ;; Lsp , tree sitter, tsx
@@ -582,6 +590,36 @@
 ;;   :hook (python-mode . py-autopep8-enable-on-save))
 
 ;; Custom functions
+(defun package-upgrade-all ()
+  "Upgrade all packages automatically without showing *Packages* buffer."
+  (interactive)
+  (package-refresh-contents)
+  (let (upgrades)
+    (cl-flet ((get-version (name where)
+                (let ((pkg (cadr (assq name where))))
+                  (when pkg
+                    (package-desc-version pkg)))))
+      (dolist (package (mapcar #'car package-alist))
+        (let ((in-archive (get-version package package-archive-contents)))
+          (when (and in-archive
+                     (version-list-< (get-version package package-alist)
+                                     in-archive))
+            (push (cadr (assq package package-archive-contents))
+                  upgrades)))))
+    (if upgrades
+        (when (yes-or-no-p
+               (message "Upgrade %d package%s (%s)? "
+                        (length upgrades)
+                        (if (= (length upgrades) 1) "" "s")
+                        (mapconcat #'package-desc-full-name upgrades ", ")))
+          (save-window-excursion
+            (dolist (package-desc upgrades)
+              (let ((old-package (cadr (assq (package-desc-name package-desc)
+                                             package-alist))))
+                (package-install package-desc)
+                (package-delete  old-package)))))
+      (message "All packages are up to date"))))
+
 (defun wrap-in-type (name &optional add-comma?)
   (meow-mark-symbol 1)
   (if add-comma?
@@ -731,6 +769,7 @@
     (replace-char)))
 
 ;; Custom shortcuts
+(global-set-key (kbd "C-c u d") 'dashboard-refresh-buffer)
 
 ;; avy copy line
 (global-set-key (kbd "C-c l") 'avy-copy-line)
@@ -858,7 +897,8 @@
    '("t" . meow-till)
    '("u" . meow-undo)
    '("U" . meow-undo-in-selection)
-   '("v" . meow-visit)
+   ;; '("v" . meow-visit)
+   '("v" . goto-char-2-right)
    '("w" . meow-mark-word)
    '("W" . meow-mark-symbol)
    '("x" . meow-line)
@@ -868,7 +908,7 @@
    '("z" . goto-last-change)
    '("Z" . goto-last-change-reverse)
    '("'" . repeat)
-   '("`" . goto-char-2-right)
+   '("`" . goto-char-right)
    ;; my shortcuts
    '("\\" . comment-line)
    '("/" . "M-s")
@@ -928,7 +968,7 @@
       (file+headline "/home/krishna/.emacs.d/todo.org" "Tasks")
       "* TODO [#A] %?")))
  '(package-selected-packages
-   '(kaolin-themes treemacs-all-the-icons auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
+   '(all-the-icons-dired-mode all-the-icons-dired posframe popup meow js2-mode ivy ht helm-core git-commit f emacsql-sqlite emacsql dash bind-key async all-the-icons-nerd-fonts kaolin-themes treemacs-all-the-icons auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
  '(pdf-view-midnight-colors '("#fdf4c1" . "#282828"))
  '(rustic-ansi-faces
    ["#2D2A2E" "#CC6666" "#A9DC76" "#FFD866" "#78DCE8" "#FF6188" "#78DCE8" "#FCFCFA"])
@@ -966,4 +1006,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 130 :width normal :foundry "UKWN" :family "Iosevka Term SS04")))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 125 :width normal :foundry "UKWN" :family "Iosevka Comfy")))))
