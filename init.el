@@ -117,14 +117,6 @@
 ;; Diminish
 (use-package diminish)
 
-;; Ligatures
-(use-package ligature
-  :hook '(web-mode typescript-mode)
-  :config
-  (ligature-set-ligatures '(web-mode)
-                          '("<!--" "-->" "</>" "</" "/>" "!==" "===" "=>" ">=" "<="))
-  (ligature-set-ligatures '(typescript-mode) '("!==" "===" "=>" ">=" "<=")))
-
 ;; ;; Beacon
 ;; (use-package beacon
 ;;   :init
@@ -272,8 +264,7 @@
 ;; Avy
 (use-package avy
   :config
-  (setq avy-background t)
-    )
+  (setq avy-background t))
 
 ;; Ace jump
 ;; (use-package ace-jump-mode)
@@ -588,6 +579,89 @@
 ;; ;; python
 ;; (use-package py-autopep8
 ;;   :hook (python-mode . py-autopep8-enable-on-save))
+
+;; Prettify symbols
+(global-prettify-symbols-mode t)
+(use-package pretty-mode
+  :init (global-pretty-mode t)
+  :config
+  (pretty-deactivate-groups
+   '(:equality :ordering :ordering-double :ordering-triple
+               :arrows :arrows-twoheaded :punctuation
+               :logic :sets))
+  (pretty-activate-groups
+   '(:sub-and-superscripts :greek :arithmetic-nary)))
+
+(defun prettify-typescript-symbols ()
+   (mapc (lambda (pair) (push pair prettify-symbols-alist))
+         '(;; Syntax
+           ("function" .      #x0192)
+           ("() =>" .      #x0192)
+           ("&&" .      #x2227)
+           ("||" .      #x222B)
+           ("some" .      #x2203)
+           ("===" .      #x2261)
+           ("!==" .      #x2262)
+           ;; ("not" .      #x2757)
+           ;; ("in" .       #x2208)
+           ;; ("not in" .   #x2209)
+           ("return" .   #x27fc)
+           ("yield" .    #x27fb)
+           ("for" .      #x2200)
+           ;; Base Types
+           ("int" .      #x2124)
+           ("number" .    #x2115)
+           ("string" .      #x1d54a)
+           ("true" .     #x1d54b)
+           ("false" .    #x1d53d)
+           ;; Mypy
+           ;; ("Dict" .     #x1d507)
+           ;; ("Array" .     #x2112)
+           ("Array" .     #x24B6)
+           ;; ("Tuple" .    #x2a02)
+           ("Set" .      #x2126)
+           ;; ("Iterable" . #x1d50a)
+           ;; ("Any" .      #x2754)
+           ;; ("Union" .    #x22c3)
+           )))
+(add-hook 'typescript-mode-hook 'prettify-typescript-symbols)
+(add-hook 'tide-mode-hook 'prettify-typescript-symbols)
+
+(add-hook
+ 'python-mode-hook
+ (lambda ()
+   (mapc (lambda (pair) (push pair prettify-symbols-alist))
+         '(;; Syntax
+           ("def" .      #x0192)
+           ("not" .      #x2757)
+           ("in" .       #x2208)
+           ("not in" .   #x2209)
+           ("return" .   #x27fc)
+           ("yield" .    #x27fb)
+           ("for" .      #x2200)
+           ;; Base Types
+           ("int" .      #x2124)
+           ("float" .    #x211d)
+           ("str" .      #x1d54a)
+           ("True" .     #x1d54b)
+           ("False" .    #x1d53d)
+           ("some" .      #x2203)
+           ;; Mypy
+           ("Dict" .     #x1d507)
+           ("List" .     #x2112)
+           ("Tuple" .    #x2a02)
+           ("Set" .      #x2126)
+           ("Iterable" . #x1d50a)
+           ("Any" .      #x2754)
+           ("Union" .    #x22c3)))))    
+;; Ligatures
+(use-package ligature
+  :hook '(web-mode typescript-mode)
+  :config
+  (ligature-set-ligatures '(web-mode)
+                          '("<!--" "-->" "</>" "</" "/>" "!==" "===" "=>" ">=" "<="))
+  (ligature-set-ligatures '(typescript-mode) '("!==" "===" "=>" ">=" "<=")))
+
 
 ;; Custom functions
 (defun package-upgrade-all ()
@@ -968,7 +1042,7 @@
       (file+headline "/home/krishna/.emacs.d/todo.org" "Tasks")
       "* TODO [#A] %?")))
  '(package-selected-packages
-   '(all-the-icons-dired-mode all-the-icons-dired posframe popup meow js2-mode ivy ht helm-core git-commit f emacsql-sqlite emacsql dash bind-key async all-the-icons-nerd-fonts kaolin-themes treemacs-all-the-icons auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
+   '(pretty-mode all-the-icons-dired-mode all-the-icons-dired posframe popup meow js2-mode ivy ht helm-core git-commit f emacsql-sqlite emacsql dash bind-key async all-the-icons-nerd-fonts kaolin-themes treemacs-all-the-icons auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
  '(pdf-view-midnight-colors '("#fdf4c1" . "#282828"))
  '(rustic-ansi-faces
    ["#2D2A2E" "#CC6666" "#A9DC76" "#FFD866" "#78DCE8" "#FF6188" "#78DCE8" "#FCFCFA"])

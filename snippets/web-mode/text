@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: text
+# key: ;T
+# --
+<Text $1>
+    $2
+</Text> 
