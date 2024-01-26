@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: value/onChange
+# key: ;voc
+# --
+value: $1;
+onChange: (${2:val}: $1) => void;

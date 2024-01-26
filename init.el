@@ -51,6 +51,9 @@
 (setq-default tab-width 4)
 (setq indent-line-function 'insert-tab)
 
+
+(fset 'yes-or-no-p 'y-or-n-p)
+
 (setq-default shell-file-name "/bin/bash")
 (setq-default explicit-shell-file-name "/bin/bash")
 
@@ -70,6 +73,15 @@
 ;;(set-frame-parameter (selected-frame) 'alpha <both>)
 ;; (set-frame-parameter (selected-frame) 'alpha 86)
 ;; (add-to-list 'default-frame-alist '(alpha 86))
+
+;; Manual pacs
+(add-to-list 'load-path "~/.emacs.d/manual-packages/ef-themes")
+(require 'ef-themes)
+
+(use-package indent-bars
+  :load-path "~/.emacs.d/manual-packages/indent-bars"
+  :hook ((python-mode web-mode typescript-mode) . indent-bars-mode))
+
 ;; Prettify symbols
 (global-prettify-symbols-mode t)
 (use-package pretty-mode
@@ -90,6 +102,7 @@
            ("&&" .      #x2227)
            ("||" .      #x2228)
            ("some" .      #x2203)
+           ("async" .      #x2732)
            ("===" .      #x2261)
            ("!==" .      #x2262)
            ;; ("not" .      #x2757)
@@ -99,7 +112,7 @@
            ("()=>" .   #x27f4)
            ("return" .   #x27fc)
            ("yield" .    #x27fb)
-           ("for" .      #x2200)
+           ("forEach" .      #x2200)
            ;; Base Types
            ("int" .      #x2124)
            ("number" .    #x2115)
@@ -158,7 +171,6 @@
 ;; ;; (load-theme 'ef-winter t)
 ;; (ef-themes-select 'ef-trio-dark)
 
-    
 (global-set-key (kbd "C-c t") 'ef-themes-toggle)
 (use-package modus-themes
   :config
@@ -194,6 +206,9 @@
 
 ;; Diminish
 (use-package diminish)
+
+;; Rg
+(use-package rg)
 
 ;; ;; Beacon
 ;; (use-package beacon
@@ -266,6 +281,11 @@
   :config
   (setq mood-line-glyph-alist mood-line-glyphs-fira-code))
 
+(use-package embrace)
+(use-package expand-region)
+
+(use-package all-the-icons)
+
 ;; Treemacs
 (use-package treemacs
   :bind
@@ -278,9 +298,9 @@
 (use-package treemacs-projectile
   :after (treemacs projectile))
 
-(use-package treemacs-all-the-icons
-  :init
-  (treemacs-load-theme "all-the-icons"))
+;; (use-package treemacs-all-the-icons
+;;   :init
+;;   (treemacs-load-theme "all-the-icons"))
 
 ;; Dired
 (use-package all-the-icons-dired
@@ -288,13 +308,37 @@
 ;; (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
 (add-hook 'dired-mode-hook 'dired-hide-details-mode)
 
+;; Hydra
+(use-package hydra)
+(defhydra hydra-zoom (global-map "<f2>")
+  "zoom"
+  ("j" text-scale-increase "in")
+  ("k" text-scale-decrease "out"))
+
+(defhydra hydra-bookmarked-files (:color blue)
+  "Bookmarked files"
+  ("a" (ido-find-file-in-dir (expand-file-name "~/.config/awesome")) "Awesome")
+  ("c" (ido-find-file-in-dir (expand-file-name "~/.config")) "Config")
+  ("e" (find-file (expand-file-name "~/.emacs.d/init.el")) "Emacs")
+  ("h" (ido-find-file-in-dir "/mnt/projects/Haskell") "Haskell")
+  ("l" (ido-find-file-in-dir "/mnt/projects/Perl") "Perl")
+  ("p" (ido-find-file-in-dir "/mnt/projects") "Projects")
+  ("r" (ido-find-file-in-dir "/mnt/projects/Rust") "Rust")
+  ("R" (ido-find-file-in-dir "/mnt/projects/React") "React")
+  ("t" (ido-find-file-in-dir "/mnt/projects/Typescript") "Typescript")
+  ("y" (ido-find-file-in-dir "/mnt/projects/Python") "Python"))
+(global-set-key (kbd "C-c q") 'hydra-bookmarked-files/body)
+
 ;; Rust
-;; (use-package rust-mode
-;;   :init
-;;   (setq rust-format-on-save t))
+(use-package rust-mode
+  :init
+  (setq rust-format-on-save t))
 
 ;; Crystal
 ;; (use-package crystal-mode)
+
+;; Haskell
+(use-package haskell-mode)
 
 ;; Fish shell
 (use-package fish-mode)
@@ -432,20 +476,28 @@
   ;; Optionally configure the narrowing key.
   ;; Both < and C-+ work reasonably well.
   (setq consult-narrow-key "<") ;; (kbd "C-+")
-  ;; (autoload 'projectile-project-root "projectile")
-  ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
+  (autoload 'projectile-project-root "projectile")
+  (setq consult-project-function (lambda (_) (projectile-project-root)))
+  :bind
+  ("C-x C-b" . 'consult-buffer)
+  ;; ("M-s" . 'consult-line)
   )
 
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 
 ;; Helm
-(use-package helm
-  :bind
-  ("C-x C-b" . 'helm-buffers-list)
-  ;; ("C-c f" . 'helm-find-files)  
-  :config
-  (add-to-list 'display-buffer-alist
-               '("*Help*" display-buffer-same-window))
-  (helm-mode 1))
+;; (use-package helm
+;;   :bind
+;;   ("C-x C-b" . 'helm-buffers-list)
+;;   ;; ("C-c f" . 'helm-find-files)  
+;;   :config
+;;   (add-to-list 'display-buffer-alist
+;;                '("*Help*" display-buffer-same-window))
+;;   (helm-mode 1))
 
 (use-package company
   :init
@@ -493,9 +545,9 @@
 ;; (use-package svelte-mode)
 
 ;; Origami
-(use-package origami
-  :init (global-origami-mode)
-  :bind ("C-c C-u f" . origami-toggle-node))
+;; (use-package origami
+;;   :init (global-origami-mode)
+;;   :bind ("C-c u f" . origami-toggle-node))
 
 (defun tsx-electric-lt (n)
   (interactive "p")
@@ -723,34 +775,47 @@
   (interactive)
   (wrap-in-type "Array"))
 
+(defun wrap-in-maybe ()
+  (interactive)
+  (wrap-in-type "Maybe"))
+
 (defun wrap-with-angle-brackets ()
   (interactive)
   (wrap-in-type ""))
 
-(global-set-key (kbd "C-c u o") 'wrap-in-omit)
-(global-set-key (kbd "C-c u p") 'wrap-in-pick)
-(global-set-key (kbd "C-c u a") 'wrap-in-array)
-(global-set-key (kbd "C-c u t") 'wrap-with-angle-brackets)
-
-(defun wrap-in-hooks (beg end hook)
-  (interactive "r")
-  (save-excursion
-    (narrow-to-region beg end)
-    (set-mark nil)
-    (goto-char (point-min))
-    (insert "use" hook "(\n\t() => ")
-    (goto-char (point-max))
-    (insert ",\n\t[]\n)")
-    (widen)))
-
-(defun wrap-in-use-memo (beg end)
-  (interactive "r")
-  (funcall (wrap-in-hooks beg end "Memo")))
-(global-set-key (kbd "C-c u m") 'wrap-in-use-memo)
+(defalias 'text-children
+   (kmacro "j m g C-SPC C-e s k x h a SPC c h i l d r e n = \" <escape> p l a SPC / <escape> j x x s k x g"))
 
 (defalias 'remove-useless-braces
    (kmacro "C-s { \" <return> <left> <backspace> C-s \" } <return> <backspace>"))
-(global-set-key (kbd "C-c u r") 'remove-useless-braces)
+
+(defalias 'sx-props-to-attrs
+   (kmacro "C-a C-s : <return> h c = SPC C-b C-d C-e , C-SPC C-a C-M-% [ , C-f + $ <return> <return> SPC C-a C-s = <return> C-SPC C-e { <escape> j"))
+
+(defhydra hydra-ts-react (:color blue)
+  "TS/React helpers"
+  ("a" (wrap-in-array) "wrap in Array")
+  ("c" (text-children) "Text children")
+  ("m" (wrap-in-maybe) "wrap in Maybe")
+  ("o" (wrap-in-omit) "wrap in Omit")
+  ("p" (wrap-in-pick) "wrap in Pick")
+  ("r" (remove-useless-braces) "remove-useless-braces")
+  ("s" (sx-props-to-attrs) "sx-props-to-attrs")
+  ("t" (wrap-with-angle-brackets) "wrap in < >")
+  ("d" (dashboard-refresh-buffer) "Dashboard"))
+(global-set-key (kbd "C-c u") 'hydra-ts-react/body)
+
+;; (defun wrap-in-hooks (beg end hook)
+;;   (interactive "r")
+;;   (save-excursion
+;;     (narrow-to-region beg end)
+;;     (set-mark nil)
+;;     (goto-char (point-min))
+;;     (insert "use" hook "(\n\t() => ")
+;;     (goto-char (point-max))
+;;     (insert ",\n\t[]\n)")
+;;     (widen)))
+
 
 (defalias 'end-delete
    (kmacro "C-e C-d"))
@@ -779,10 +844,10 @@
   (right-char +2))
 
 ;; goto-char-right
-;; (defun goto-char-right ()
-;;   (interactive)
-;;   (call-interactively 'avy-goto-char)
-;;   (right-char +1))
+(defun goto-char-right ()
+  (interactive)
+  (call-interactively 'avy-goto-char)
+  (right-char +1))
 
 ;; move-region-up-down
 (defun move-text-internal (arg)
@@ -846,7 +911,6 @@
     (replace-char)))
 
 ;; Custom shortcuts
-(global-set-key (kbd "C-c u d") 'dashboard-refresh-buffer)
 
 ;; avy copy line
 (global-set-key (kbd "C-c l") 'avy-copy-line)
@@ -984,12 +1048,13 @@
    '("Y" . meow-sync-grab)
    '("z" . goto-last-change)
    '("Z" . goto-last-change-reverse)
-   '("'" . repeat)
-   '("`" . goto-char-right)
+   '("'" . er/expand-region)
+   '("`" . goto-char-2-right)
    ;; my shortcuts
    '("\\" . comment-line)
    '("/" . "M-s")
    '("=" . end-delete)
+   '("<" . embrace-commander)
    ;; my shortcuts ends
    '("<escape>" . mode-line-other-buffer))
     (meow-thing-register 'angle '(regexp "<" ">") '(regexp "<" ">"))
@@ -1015,7 +1080,7 @@
  '(company-quickhelp-color-background "#3E4452")
  '(company-quickhelp-color-foreground "#ABB2BF")
  '(custom-safe-themes
-   '("5a00018936fa1df1cd9d54bee02c8a64eafac941453ab48394e2ec2c498b834a" "249e100de137f516d56bcf2e98c1e3f9e1e8a6dce50726c974fa6838fbfcec6b" "06ed754b259cb54c30c658502f843937ff19f8b53597ac28577ec33bb084fa52" "e266d44fa3b75406394b979a3addc9b7f202348099cfde69e74ee6432f781336" "e8567ee21a39c68dbf20e40d29a0f6c1c05681935a41e206f142ab83126153ca" "a131602c676b904a5509fff82649a639061bf948a5205327e0f5d1559e04f5ed" "c95813797eb70f520f9245b349ff087600e2bd211a681c7a5602d039c91a6428" "2ce76d65a813fae8cfee5c207f46f2a256bac69dacbb096051a7a8651aa252b0" "11cc65061e0a5410d6489af42f1d0f0478dbd181a9660f81a692ddc5f948bf34" "9cd57dd6d61cdf4f6aef3102c4cc2cfc04f5884d4f40b2c90a866c9b6267f2b3" "74e2ed63173b47d6dc9a82a9a8a6a9048d89760df18bc7033c5f91ff4d083e37" "f00a605fb19cb258ad7e0d99c007f226f24d767d01bf31f3828ce6688cbdeb22" "6128465c3d56c2630732d98a3d1c2438c76a2f296f3c795ebda534d62bb8a0e3" "d516f1e3e5504c26b1123caa311476dc66d26d379539d12f9f4ed51f10629df3" "3c7a784b90f7abebb213869a21e84da462c26a1fda7e5bd0ffebf6ba12dbd041" "30dc9873c16a0efb187bb3f8687c16aae46b86ddc34881b7cae5273e56b97580" "dde643b0efb339c0de5645a2bc2e8b4176976d5298065b8e6ca45bc4ddf188b7" "bfc0b9c3de0382e452a878a1fb4726e1302bf9da20e69d6ec1cd1d5d82f61e3d" "e09401ab2c457e2e4d8b800e1c546dbc8339dc33b2877836ba5d9b6294ae6e55" "d2b7abf3fb8e9505a478a04bd6d727a029cab49d58c0fafe271293d095438067" "6976ce7d103d13c56a79cd0305f743ac880dafd52124a05f7163f51bca84e256" "22c213e81a533c259127302ef1e0f2d1f332df83969a1f9cf6d5696cbe789543" "3741b7bfab715b2e62d12ed0b129c6f8345d60f056fce2c0a5de24822876f854" "935cd704a3b4b12c9c0582da1d25437e2802d0f82c5d46de0eb5a968dfad08da" "347313c47366c3cb305fb63dff7df87426061d5529a86c215086fe8581228733" "2a0669753764cc15b818fc882d271fc30850d5a45220a499fb9d835846001b7c" "4e7672ce1015731d9d6955652f8f1b438420f109d15f662a014fa4e992429b9a" "45611797b789abf53e97c43b29c7f10dd6f18971e238e700bc885e702531053a" "04a9d8ab1ba3288f88018d1a2ba84be4c21a3b3c0b479005ac2b2ee7d417caa3" "931ee45708e894d5233fc4a94ae0065c765c1a0aeb1bd8d9feee22f5622f44b4" "9dbd2c6f93cc1774c261f23042be8bf7decc8f6599c21189c04d7791231b2b79" "c01cd0485ce35cf0a19ab91146d2c2b6528ec60ad4c8ffec5b2b7cc4bc05bd80" "01f52ed4dc9cfd4f397eda57c9eb5fea360bd6c18a2684121cc47279bfca5a51" "5ca9d0a5971e42ecee31398533e5b9dfc01c61a69bf3fd69395aa189c792252e" "c77866b9ee1cc2fd95cfb55fe99813b95c10f620f51f210de96c8b8bdead4c46" default))
+   '("64204b9e3ad01000654d5524d2904fc8fa28aafc168f48660897ddfe36a2bfd5" "6c01b5d4faa0f143055e63c9fba8e23e9160f181e54b14b46d56410811edbc9e" "6ed8a3705a4296955010ecfcf808f02ac0d52985373e07c63f7fe5bc85206bb4" "f7b6b207d7a6318ea5d33ca2dea51483350d0c26beb986f008d63258b9c112ab" "d9c038dc91688c433de8e83709449563ec6475b900a21d7016856035ae4dcd32" "0d12b08dec64641c5df1a13d2c52ad678f6235a9b1c86041ea457fc1a71651dc" "2d09bd884d697b48b380b48117ccaebd8e99fe1cb242e31675dcec5724c603f6" "f84dbe5cfa80aa6774c57fef30d76bcdeb71bd0077665fb74f75728c42f5675d" "2ef84b2c7ad4810912a095993ca8bdf386e1fd7f97842b57aac62dddb2bba211" "71acf47cc8cd4158e52ef63a9f8c4d128aa33d6772a0106b5a72757486047e08" "65a1a112abd99456167df57ce2cfff42ed137c4f9146e75b2ae9812499689c3a" "9b64a681308383067359cf06bfa6a1bc4fa75c5b68182e4d6ba4d1816277d70e" "b95f61aa5f8a54d494a219fcde9049e23e3396459a224631e1719effcb981dbd" "0170347031e5dfa93813765bc4ef9269a5e357c0be01febfa3ae5e5fcb351f09" "788121c96b7a9b99a6f35e53b7c154991f4880bb0046a80330bb904c1a85e275" "b5fab52f16546a15f171e6bd450ff11f2a9e20e5ac7ec10fa38a14bb0c67b9ab" "2d035eb93f92384d11f18ed00930e5cc9964281915689fa035719cab71766a15" "f490984d405f1a97418a92f478218b8e4bcc188cf353e5dd5d5acd2f8efd0790" "28a104f642d09d3e5c62ce3464ea2c143b9130167282ea97ddcc3607b381823f" "35c096aa0975d104688a9e59e28860f5af6bb4459fd692ed47557727848e6dfe" "5a00018936fa1df1cd9d54bee02c8a64eafac941453ab48394e2ec2c498b834a" "249e100de137f516d56bcf2e98c1e3f9e1e8a6dce50726c974fa6838fbfcec6b" "06ed754b259cb54c30c658502f843937ff19f8b53597ac28577ec33bb084fa52" "e266d44fa3b75406394b979a3addc9b7f202348099cfde69e74ee6432f781336" "e8567ee21a39c68dbf20e40d29a0f6c1c05681935a41e206f142ab83126153ca" "a131602c676b904a5509fff82649a639061bf948a5205327e0f5d1559e04f5ed" "c95813797eb70f520f9245b349ff087600e2bd211a681c7a5602d039c91a6428" "2ce76d65a813fae8cfee5c207f46f2a256bac69dacbb096051a7a8651aa252b0" "11cc65061e0a5410d6489af42f1d0f0478dbd181a9660f81a692ddc5f948bf34" "9cd57dd6d61cdf4f6aef3102c4cc2cfc04f5884d4f40b2c90a866c9b6267f2b3" "74e2ed63173b47d6dc9a82a9a8a6a9048d89760df18bc7033c5f91ff4d083e37" "f00a605fb19cb258ad7e0d99c007f226f24d767d01bf31f3828ce6688cbdeb22" "6128465c3d56c2630732d98a3d1c2438c76a2f296f3c795ebda534d62bb8a0e3" "d516f1e3e5504c26b1123caa311476dc66d26d379539d12f9f4ed51f10629df3" "3c7a784b90f7abebb213869a21e84da462c26a1fda7e5bd0ffebf6ba12dbd041" "30dc9873c16a0efb187bb3f8687c16aae46b86ddc34881b7cae5273e56b97580" "dde643b0efb339c0de5645a2bc2e8b4176976d5298065b8e6ca45bc4ddf188b7" "bfc0b9c3de0382e452a878a1fb4726e1302bf9da20e69d6ec1cd1d5d82f61e3d" "e09401ab2c457e2e4d8b800e1c546dbc8339dc33b2877836ba5d9b6294ae6e55" "d2b7abf3fb8e9505a478a04bd6d727a029cab49d58c0fafe271293d095438067" "6976ce7d103d13c56a79cd0305f743ac880dafd52124a05f7163f51bca84e256" "22c213e81a533c259127302ef1e0f2d1f332df83969a1f9cf6d5696cbe789543" "3741b7bfab715b2e62d12ed0b129c6f8345d60f056fce2c0a5de24822876f854" "935cd704a3b4b12c9c0582da1d25437e2802d0f82c5d46de0eb5a968dfad08da" "347313c47366c3cb305fb63dff7df87426061d5529a86c215086fe8581228733" "2a0669753764cc15b818fc882d271fc30850d5a45220a499fb9d835846001b7c" "4e7672ce1015731d9d6955652f8f1b438420f109d15f662a014fa4e992429b9a" "45611797b789abf53e97c43b29c7f10dd6f18971e238e700bc885e702531053a" "04a9d8ab1ba3288f88018d1a2ba84be4c21a3b3c0b479005ac2b2ee7d417caa3" "931ee45708e894d5233fc4a94ae0065c765c1a0aeb1bd8d9feee22f5622f44b4" "9dbd2c6f93cc1774c261f23042be8bf7decc8f6599c21189c04d7791231b2b79" "c01cd0485ce35cf0a19ab91146d2c2b6528ec60ad4c8ffec5b2b7cc4bc05bd80" "01f52ed4dc9cfd4f397eda57c9eb5fea360bd6c18a2684121cc47279bfca5a51" "5ca9d0a5971e42ecee31398533e5b9dfc01c61a69bf3fd69395aa189c792252e" "c77866b9ee1cc2fd95cfb55fe99813b95c10f620f51f210de96c8b8bdead4c46" default))
  '(fci-rule-color "#3E4451")
  '(highlight-indent-guides-method 'character)
  '(highlight-tail-colors ((("#393b35") . 0) (("#343b40") . 20)))
@@ -1040,7 +1105,7 @@
       (file+headline "/home/krishna/.emacs.d/todo.org" "Tasks")
       "* TODO [#A] %?")))
  '(package-selected-packages
-   '(wfnames nerd-icons pretty-mode all-the-icons-dired-mode all-the-icons-dired posframe popup meow js2-mode ivy ht helm-core git-commit f emacsql-sqlite emacsql dash bind-key async all-the-icons-nerd-fonts kaolin-themes treemacs-all-the-icons auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs ef-themes markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile swiper dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
+   '(haskell-mode rg poet-theme rust-mode compat orderless embrace expand-region wfnames nerd-icons pretty-mode all-the-icons-dired-mode all-the-icons-dired posframe popup meow js2-mode ivy ht helm-core git-commit f emacsql-sqlite emacsql dash bind-key async all-the-icons-nerd-fonts kaolin-themes treemacs-all-the-icons auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
  '(rustic-ansi-faces
    ["#2D2A2E" "#CC6666" "#A9DC76" "#FFD866" "#78DCE8" "#FF6188" "#78DCE8" "#FCFCFA"])
  '(tetris-x-colors
@@ -1077,4 +1142,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:inherit nil :extend nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 130 :width normal :foundry "UKWN" :family "Iosevka Term SS04")))))
