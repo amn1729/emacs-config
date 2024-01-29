@@ -320,6 +320,7 @@
   ("a" (ido-find-file-in-dir (expand-file-name "~/.config/awesome")) "Awesome")
   ("c" (ido-find-file-in-dir (expand-file-name "~/.config")) "Config")
   ("e" (find-file (expand-file-name "~/.emacs.d/init.el")) "Emacs")
+  ("g" (ido-find-file-in-dir "/mnt/projects/Git") "Git")
   ("h" (ido-find-file-in-dir "/mnt/projects/Haskell") "Haskell")
   ("l" (ido-find-file-in-dir "/mnt/projects/Perl") "Perl")
   ("p" (ido-find-file-in-dir "/mnt/projects") "Projects")
@@ -688,11 +689,12 @@
   :init
   (setq create-lockfiles nil)
   :diminish rjsx-mode
-  :mode "\\.js\\'")
+  :mode "\\.jsx\\'")
 
 ;; prettier-js
 (use-package prettier-js
   :hook ((rjsx-mode . prettier-js-mode)
+	     (js-mode . prettier-js-mode)
 	     (tide-mode . prettier-js-mode)
          (typescript-mode . prettier-js-mode))
   ;; :config
@@ -792,10 +794,15 @@
 (defalias 'sx-props-to-attrs
    (kmacro "C-a C-s : <return> h c = SPC C-b C-d C-e , C-SPC C-a C-M-% [ , C-f + $ <return> <return> SPC C-a C-s = <return> C-SPC C-e { <escape> j"))
 
+(defun sort-imports-of-buffer ()
+  (interactive)
+  (shell-command-on-region (point-min) (point-max) "/mnt/projects/Perl/muy-importante/main.pl" nil t))
+
 (defhydra hydra-ts-react (:color blue)
   "TS/React helpers"
   ("a" (wrap-in-array) "wrap in Array")
   ("c" (text-children) "Text children")
+  ("i" (sort-imports-of-buffer) "Sort Imports")
   ("m" (wrap-in-maybe) "wrap in Maybe")
   ("o" (wrap-in-omit) "wrap in Omit")
   ("p" (wrap-in-pick) "wrap in Pick")
