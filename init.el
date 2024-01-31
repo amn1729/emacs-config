@@ -335,8 +335,17 @@
   :init
   (setq rust-format-on-save t))
 
-;; Crystal
-;; (use-package crystal-mode)
+;; Ocaml
+(use-package caml
+  :config
+  (add-to-list 'auto-mode-alist '("\\.ml[iylp]?$" . caml-mode))
+  (autoload 'caml-mode "caml" "Major mode for editing OCaml code." t)
+  (autoload 'run-caml "inf-caml" "Run an inferior OCaml process." t)
+  (autoload 'camldebug "camldebug" "Run ocamldebug on program." t)
+  (add-to-list 'interpreter-mode-alist '("ocamlrun" . caml-mode))
+  (add-to-list 'interpreter-mode-alist '("ocaml" . caml-mode))
+  (if window-system (require 'caml-font))
+)
 
 ;; Haskell
 (use-package haskell-mode)
@@ -785,14 +794,6 @@
   (interactive)
   (wrap-in-type ""))
 
-(defalias 'text-children
-   (kmacro "j m g C-SPC C-e s k x h a SPC c h i l d r e n = \" <escape> p l a SPC / <escape> j x x s k x g"))
-
-(defalias 'remove-useless-braces
-   (kmacro "C-s { \" <return> <left> <backspace> C-s \" } <return> <backspace>"))
-
-(defalias 'sx-props-to-attrs
-   (kmacro "C-a C-s : <return> h c = SPC C-b C-d C-e , C-SPC C-a C-M-% [ , C-f + $ <return> <return> SPC C-a C-s = <return> C-SPC C-e { <escape> j"))
 
 (defun sort-imports-of-buffer ()
   (interactive)
@@ -801,7 +802,6 @@
 (defhydra hydra-ts-react (:color blue)
   "TS/React helpers"
   ("a" (wrap-in-array) "wrap in Array")
-  ("c" (text-children) "Text children")
   ("i" (sort-imports-of-buffer) "Sort Imports")
   ("m" (wrap-in-maybe) "wrap in Maybe")
   ("o" (wrap-in-omit) "wrap in Omit")
@@ -811,6 +811,31 @@
   ("t" (wrap-with-angle-brackets) "wrap in < >")
   ("d" (dashboard-refresh-buffer) "Dashboard"))
 (global-set-key (kbd "C-c u") 'hydra-ts-react/body)
+
+(defhydra hydra-avy (:color blue)
+  "Avy copy/move"
+  ("l" (avy-copy-line) "Copy line")
+  ("r" (avy-copy-region) "Copy region")
+  ("m" (avy-move-line) "Move line")
+  ("w" (avy-move-region) "Move region"))
+(global-set-key (kbd "C-c a") 'hydra-avy/body)
+
+;; Macro aliases
+(defalias 'end-delete
+   (kmacro "C-e C-d"))
+
+(defalias 'text-children
+   (kmacro "j m g C-SPC C-e s k x h a SPC c h i l d r e n = \" <escape> p l a SPC / <escape> j x x s k x g"))
+
+(defalias 'remove-useless-braces
+   (kmacro "C-s { \" <return> <left> <backspace> C-s \" } <return> <backspace>"))
+
+(defalias 'sx-props-to-attrs
+   (kmacro "C-a C-s : <return> h c = SPC C-b C-d C-e , C-SPC C-a C-M-% [ , C-f + $ <return> <return> SPC C-a C-s = <return> C-SPC C-e { <escape> j"))
+
+(global-set-key (kbd "C-c r r") 'remove-useless-braces)
+(global-set-key (kbd "C-c r s") 'sx-props-to-attrs)
+(global-set-key (kbd "C-c r t") 'text-children)
 
 ;; (defun wrap-in-hooks (beg end hook)
 ;;   (interactive "r")
@@ -823,9 +848,6 @@
 ;;     (insert ",\n\t[]\n)")
 ;;     (widen)))
 
-
-(defalias 'end-delete
-   (kmacro "C-e C-d"))
 
 (defun projectile-find-file-in-current-directory ()
   (interactive)
@@ -918,21 +940,6 @@
     (replace-char)))
 
 ;; Custom shortcuts
-
-;; avy copy line
-(global-set-key (kbd "C-c l") 'avy-copy-line)
-
-;; avy copy region
-(global-set-key (kbd "C-c r") 'avy-copy-region)
-
-;; avy move line
-(global-set-key (kbd "C-c a") 'avy-move-line)
-
-;; avy move region
-(global-set-key (kbd "C-c w") 'avy-move-region)
-
-;; avy move region
-(global-set-key (kbd "C-c f") 'goto-char-2-right)
 
 ;; ;; exit insert mode
 ;; (global-set-key (kbd "C-z") (kbd "<escape>"))
@@ -1112,7 +1119,7 @@
       (file+headline "/home/krishna/.emacs.d/todo.org" "Tasks")
       "* TODO [#A] %?")))
  '(package-selected-packages
-   '(haskell-mode rg poet-theme rust-mode compat orderless embrace expand-region wfnames nerd-icons pretty-mode all-the-icons-dired-mode all-the-icons-dired posframe popup meow js2-mode ivy ht helm-core git-commit f emacsql-sqlite emacsql dash bind-key async all-the-icons-nerd-fonts kaolin-themes treemacs-all-the-icons auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
+   '(tuareg caml merlin haskell-mode rg poet-theme rust-mode compat orderless embrace expand-region wfnames nerd-icons pretty-mode all-the-icons-dired-mode all-the-icons-dired posframe popup meow js2-mode ivy ht helm-core git-commit f emacsql-sqlite emacsql dash bind-key async all-the-icons-nerd-fonts kaolin-themes treemacs-all-the-icons auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
  '(rustic-ansi-faces
    ["#2D2A2E" "#CC6666" "#A9DC76" "#FFD866" "#78DCE8" "#FF6188" "#78DCE8" "#FCFCFA"])
  '(tetris-x-colors
