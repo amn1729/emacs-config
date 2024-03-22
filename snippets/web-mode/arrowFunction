@@ -2,4 +2,4 @@
 # name: arrowFunction
 # key: ;af
 # --
-($1: any$2) => { $3 }
+($1) => { $2 }

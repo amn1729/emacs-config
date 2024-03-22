@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: importAppCommon
+# key: ;iac
+# --
+import { $1 } from "app/Common";$0

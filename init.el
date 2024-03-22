@@ -171,7 +171,7 @@
 ;; ;; (load-theme 'ef-winter t)
 ;; (ef-themes-select 'ef-trio-dark)
 
-(global-set-key (kbd "C-c t") 'ef-themes-toggle)
+(global-set-key (kbd "C-c s") 'ef-themes-toggle)
 (use-package modus-themes
   :config
   ;; Add all your customizations prior to loading the themes
@@ -198,11 +198,17 @@
 ;; (load-theme 'ef-elea-dark t)
 
 ;; Abbreviation
-(setq-default abbrev-mode t)      
-;; (abbrev-table-put global-abbrev-table :case-fixed t)
-(dolist (table abbrev-table-name-list)
-    (abbrev-table-put (symbol-value table) :case-fixed t))
+;; (abbrev-table-put typescript-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[;_].*\\|.*\\)")
+;; (abbrev-table-put web-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[;_].*\\|.*\\)")
+;; (add-hook 'prog-mode-hook 'abbrev-mode)
+;; (abbrev-table-put global-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[;_].*\\|.*\\)")
 
+;; (abbrev-table-put global-abbrev-table :case-fixed t)
+;; (dolist (table abbrev-table-name-list)
+;;     (abbrev-table-put (symbol-value table) :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[;_].*\\|.*\\)"))
+;; (dolist (table abbrev-table-name-list)
+;;   (abbrev-table-put (symbol-value table) :case-fixed t))
+;; (setq-default abbrev-mode t)
 
 ;; Diminish
 (use-package diminish)
@@ -396,6 +402,7 @@
 ;; Avy
 (use-package avy
   :config
+  (setq avy-keys '(?c ?i ?e ?a ?, ?. ?h ?t ?s))
   (setq avy-background t))
 
 ;; Ace jump
@@ -633,7 +640,13 @@
   ;; :after tree-sitter
   :mode ("\\.ts\\'" "\\.tsx\\'")
   :hook ((typescript-mode . setup-tide-mode)
-         (typescript-mode . prettier-js-mode)))
+         (typescript-mode . prettier-js-mode))
+  :init
+  (add-hook 'typescript-mode-hook
+            (lambda ()
+              (abbrev-table-put typescript-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[;_].*\\|.*\\)")
+              (abbrev-mode)
+              (define-key web-mode-map "<" 'tsx-electric-lt))))
 
 
 ;; (use-package typescript-mode
@@ -671,6 +684,7 @@
   (add-hook 'web-mode-hook (lambda ()
                              (when (string-equal "tsx" (file-name-extension buffer-file-name))
                                (setup-tide-mode)
+                               (abbrev-table-put web-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[;_].*\\|.*\\)")
                                (abbrev-mode)
                                (define-key web-mode-map "<" 'tsx-electric-lt))))
   :config
@@ -794,7 +808,6 @@
   (interactive)
   (wrap-in-type ""))
 
-
 (defun sort-imports-of-buffer ()
   (interactive)
   (shell-command-on-region (point-min) (point-max) "/mnt/projects/Perl/muy-importante/main.pl" nil t))
@@ -806,7 +819,6 @@
   ("m" (wrap-in-maybe) "wrap in Maybe")
   ("o" (wrap-in-omit) "wrap in Omit")
   ("p" (wrap-in-pick) "wrap in Pick")
-  ("r" (remove-useless-braces) "remove-useless-braces")
   ("s" (sx-props-to-attrs) "sx-props-to-attrs")
   ("t" (wrap-with-angle-brackets) "wrap in < >")
   ("d" (dashboard-refresh-buffer) "Dashboard"))
@@ -814,11 +826,18 @@
 
 (defhydra hydra-avy (:color blue)
   "Avy copy/move"
-  ("l" (avy-copy-line) "Copy line")
-  ("r" (avy-copy-region) "Copy region")
-  ("m" (avy-move-line) "Move line")
-  ("w" (avy-move-region) "Move region"))
+  ("l" avy-copy-line "Copy line")
+  ("r" avy-copy-region "Copy region")
+  ("m" avy-move-line "Move line")
+  ("w" avy-move-region "Move region"))
 (global-set-key (kbd "C-c a") 'hydra-avy/body)
+
+;; (defhydra hydra-embrace (:color blue)
+;;   "Embrace"
+;;   ("a" embrace-add "Add")
+;;   ("c" embrace-change "Change")
+;;   ("d" embrace-delete "Delete"))
+;; (global-set-key (kbd "C-c l") 'hydra-embrace/body)
 
 ;; Macro aliases
 (defalias 'end-delete
@@ -833,9 +852,24 @@
 (defalias 'sx-props-to-attrs
    (kmacro "C-a C-s : <return> h c = SPC C-b C-d C-e , C-SPC C-a C-M-% [ , C-f + $ <return> <return> SPC C-a C-s = <return> C-SPC C-e { <escape> j"))
 
-(global-set-key (kbd "C-c r r") 'remove-useless-braces)
-(global-set-key (kbd "C-c r s") 'sx-props-to-attrs)
-(global-set-key (kbd "C-c r t") 'text-children)
+(defalias 'remove-font-prop
+   (kmacro "C-a C-s f o n t <return> b s SPC m l"))
+
+(defalias 'use-text
+   (kmacro "SPC y T y p o g r a h <backspace> p h y <return> T e x t <return> ! SPC b C-s T e x t <return> b s <backspace> <backspace> C-s a p p / c o m m <return> C-r i m p o r t <return> e e i T e x t , <escape> C-s T e x t <return>"))
+
+(defalias 'to-unit
+   (kmacro "W SPC ( h i u n i t <escape>"))
+
+(defhydra hydra-macros (:color blue)
+  "Saved Macros"
+  ("c" text-children "Text-Children")
+  ("f" remove-font-prop "Remove-Font-Prop")
+  ("r" remove-useless-braces "Remove-Useless-Braces")
+  ("s" sx-props-to-attrs "Sx-Props-To-Attrs")
+  ("t" use-text "use-text")
+  ("u" to-unit "to-unit"))
+(global-set-key (kbd "C-c r") 'hydra-macros/body)
 
 ;; (defun wrap-in-hooks (beg end hook)
 ;;   (interactive "r")
@@ -967,7 +1001,7 @@
 (global-set-key (kbd "C-c o") 'other-window)
 
 ;; save-buffer
-(global-set-key (kbd "C-c s") 'save-buffer)
+(global-set-key (kbd "C-c t") 'save-buffer)
 (global-set-key (kbd "C-c y") 'query-replace)
 ;; org-mode-src
 ;; (global-set-key (kbd "C-c s r") (kbd "C-c C-, s"))
@@ -1012,7 +1046,7 @@
    '("2" . meow-expand-2)
    '("1" . meow-expand-1)
    '("-" . negative-argument)
-   '(";" . meow-reverse)
+   '(";" . save-buffer)
    '("," . meow-inner-of-thing)
    '("." . meow-bounds-of-thing)
    '("[" . meow-beginning-of-thing)
@@ -1044,7 +1078,7 @@
    '("o" . meow-block)
    '("O" . meow-to-block)
    '("p" . meow-yank)
-   '("q" . save-buffer)
+   '("q" . meow-reverse)
    '("Q" . meow-goto-line)
    '("r" . replace-char-or-meow-replace)
    '("R" . meow-swap-grab)
@@ -1119,7 +1153,7 @@
       (file+headline "/home/krishna/.emacs.d/todo.org" "Tasks")
       "* TODO [#A] %?")))
  '(package-selected-packages
-   '(tuareg caml merlin haskell-mode rg poet-theme rust-mode compat orderless embrace expand-region wfnames nerd-icons pretty-mode all-the-icons-dired-mode all-the-icons-dired posframe popup meow js2-mode ivy ht helm-core git-commit f emacsql-sqlite emacsql dash bind-key async all-the-icons-nerd-fonts kaolin-themes treemacs-all-the-icons auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
+   '(all-the-icons tuareg caml merlin haskell-mode rg poet-theme rust-mode compat orderless embrace expand-region wfnames nerd-icons pretty-mode all-the-icons-dired-mode all-the-icons-dired posframe popup meow js2-mode ivy ht helm-core git-commit f emacsql-sqlite emacsql dash bind-key async all-the-icons-nerd-fonts kaolin-themes treemacs-all-the-icons auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
  '(rustic-ansi-faces
    ["#2D2A2E" "#CC6666" "#A9DC76" "#FFD866" "#78DCE8" "#FF6188" "#78DCE8" "#FCFCFA"])
  '(tetris-x-colors
@@ -1156,4 +1190,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 130 :width normal :foundry "UKWN" :family "Iosevka Term SS04")))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 120 :width normal :foundry "UKWN" :family "Iosevka Comfy")))))

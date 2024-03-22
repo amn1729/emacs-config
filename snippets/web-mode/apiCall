@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: apiCall
+# key: ;api
+# --
+apiCall({
+    fn: () =>                 ,
+    onSuccess: () =>          ,
+    onError: (d) => toast.error(d?.message || "Something went wrong")
+})
