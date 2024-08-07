@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: typeGeneric
+# key: ;g
+# --
+<$1> $0

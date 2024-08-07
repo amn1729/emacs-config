@@ -1,6 +1,7 @@
 ;;-*-coding: utf-8;-*-
 (define-abbrev-table 'typescript-mode-abbrev-table
   '(
+    (";e" "( ) => " nil :count 0)
     (";a" "Array" nil :count 0)
     (";b" "boolean" nil :count 3)
     (";n" "number" nil :count 0)
@@ -11,6 +12,7 @@
   '(
     (";a" "Array" nil :count 0)
     (";b" "boolean" nil :count 4)
+    (";e" "( ) => " nil :count 1)
     (";h0" "minHeight={0}" nil :count 1)
     (";h1" "height=\"100%\"" nil :count 8)
     (";ld" "loading" nil :count 4)

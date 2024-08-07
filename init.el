@@ -78,9 +78,9 @@
 (add-to-list 'load-path "~/.emacs.d/manual-packages/ef-themes")
 (require 'ef-themes)
 
-(use-package indent-bars
-  :load-path "~/.emacs.d/manual-packages/indent-bars"
-  :hook ((python-mode web-mode typescript-mode) . indent-bars-mode))
+;; (use-package indent-bars
+;;   :load-path "~/.emacs.d/manual-packages/indent-bars"
+;;   :hook ((python-mode web-mode typescript-mode) . indent-bars-mode))
 
 ;; Prettify symbols
 (global-prettify-symbols-mode t)
@@ -115,8 +115,9 @@
            ("forEach" .      #x2200)
            ;; Base Types
            ("int" .      #x2124)
-           ("number" .    #x2115)
-           ("string" .      #x1d54a)
+           ("number" .    #x014a)
+           ("string" .      #x054f)
+           ("boolean" .      #x0181)
            ("true" .     #x1d54b)
            ("false" .    #x1d53d)
            ;; Mypy
@@ -129,6 +130,7 @@
            ;; ("Any" .      #x2754)
            ;; ("Union" .    #x22c3)
            )))
+
 (add-hook 'typescript-mode-hook 'prettify-typescript-symbols)
 (add-hook 'tide-mode-hook 'prettify-typescript-symbols)
 (add-hook 'rjsx-mode-hook 'prettify-typescript-symbols)
@@ -379,8 +381,7 @@
 
 (use-package rainbow-delimiters
   :init (rainbow-delimiters-mode 1)
-  :hook (prog-mode . rainbow-delimiters-mode)
-  )
+  :hook (prog-mode . rainbow-delimiters-mode))
 
 ;; Dashboard
 (use-package dashboard
@@ -391,8 +392,7 @@
   (setq dashboard-startup-banner "/home/krishna/.emacs.d/gnu-2.png")
   (setq dashboard-center-content t)
   (setq dashboard-items '((recents . 6)
-			              (projects . 10)))
-  )
+			              (projects . 10))))
 (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
 
@@ -559,12 +559,12 @@
   :bind ("C-j" . emmet-expand-line))
 
 ;; Svelte
-;; (use-package svelte-mode)
+(use-package svelte-mode)
 
 ;; Origami
 ;; (use-package origami
 ;;   :init (global-origami-mode)
-;;   :bind ("C-c u f" . origami-toggle-node))
+;;   :bind ("C-c l f" . origami-toggle-node))
 
 (defun tsx-electric-lt (n)
   (interactive "p")
@@ -707,6 +707,11 @@
   ;; (flycheck-add-mode 'typescript-tslint 'web-mode)  
   )
 
+
+(add-to-list 'auto-mode-alist '("\\.svelte\\'" . web-mode))
+(setq web-mode-engines-alist
+      '(("svelte" . "\\.svelte\\'")))
+
 ;; rjsx
 (use-package rjsx-mode
   :init
@@ -812,9 +817,14 @@
   (interactive)
   (shell-command-on-region (point-min) (point-max) "/mnt/projects/Perl/muy-importante/main.pl" nil t))
 
+(defun ts-divide-comment ()
+  (interactive)
+   (divide-comment "/*" "*/"))
+
 (defhydra hydra-ts-react (:color blue)
   "TS/React helpers"
   ("a" (wrap-in-array) "wrap in Array")
+  ("c" (ts-divide-comment) "Divider Comment")
   ("i" (sort-imports-of-buffer) "Sort Imports")
   ("m" (wrap-in-maybe) "wrap in Maybe")
   ("o" (wrap-in-omit) "wrap in Omit")
@@ -840,6 +850,9 @@
 ;; (global-set-key (kbd "C-c l") 'hydra-embrace/body)
 
 ;; Macro aliases
+(defalias 'wrap-in-tap
+   (kmacro "SPC ( h a t a p <escape>"))
+
 (defalias 'end-delete
    (kmacro "C-e C-d"))
 
@@ -855,19 +868,32 @@
 (defalias 'remove-font-prop
    (kmacro "C-a C-s f o n t <return> b s SPC m l"))
 
-(defalias 'use-text
-   (kmacro "SPC y T y p o g r a h <backspace> p h y <return> T e x t <return> ! SPC b C-s T e x t <return> b s <backspace> <backspace> C-s a p p / c o m m <return> C-r i m p o r t <return> e e i T e x t , <escape> C-s T e x t <return>"))
+;; (defalias 'use-text
+;;    (kmacro "SPC y T y p o g r a h <backspace> p h y <return> T e x t <return> ! SPC b C-s T e x t <return> b s <backspace> <backspace> C-s a p p / c o m m <return> C-r i m p o r t <return> e e i T e x t , <escape> C-s T e x t <return>"))
 
 (defalias 'to-unit
    (kmacro "W SPC ( h i u n i t <escape>"))
 
+(defalias 'block-to-do
+   (kmacro "m f > t { l h < c { ( i _ d o <escape> o SPC y ; <return> , <return> !"))
+
+(defalias 'export-ts
+   (kmacro "C-a i e x p o r t SPC <escape>"))
+
+(defalias 'async-ts
+   (kmacro "C-a i a s y n c SPC <escape>"))
+
 (defhydra hydra-macros (:color blue)
   "Saved Macros"
   ("c" text-children "Text-Children")
+  ("d" block-to-do "Do block")
+  ("e" export-ts "Export")
+  ("y" async-ts "Async")
   ("f" remove-font-prop "Remove-Font-Prop")
   ("r" remove-useless-braces "Remove-Useless-Braces")
   ("s" sx-props-to-attrs "Sx-Props-To-Attrs")
-  ("t" use-text "use-text")
+  ;; ("t" use-text "use-text")
+  ("t" wrap-in-tap "wrap-in-tap")
   ("u" to-unit "to-unit"))
 (global-set-key (kbd "C-c r") 'hydra-macros/body)
 
@@ -973,6 +999,12 @@
       (meow-replace)
     (replace-char)))
 
+(defun divide-comment (start end)
+  (let ((content (s-trim (thing-at-point 'line t))))
+    (let ((sep (concat " " (make-string (/ (- 70 (length content)) 2) 9472) " ")))
+      (kill-whole-line)
+      (insert (concat start sep content sep end))
+      (newline))))
 ;; Custom shortcuts
 
 ;; ;; exit insert mode
@@ -983,8 +1015,9 @@
 (global-set-key (kbd "C-c /") 'comment-line)
 (global-set-key (kbd "C-c p") 'point-to-register)
 (global-set-key (kbd "C-c v") 'jump-to-register)
-(global-set-key (kbd "C-c z") 'projectile-find-file)
+(global-set-key (kbd "C-c '") 'projectile-find-file)
 (global-set-key (kbd "C-c i") 'projectile-find-file-in-current-directory)
+(global-set-key (kbd "C-c l") 'consult-ripgrep)
 
 ;; delete-line
 ;; (global-set-key (kbd "C-'") (kbd "abc C-a C-k C-k"))
@@ -1094,9 +1127,8 @@
    '("X" . meow-goto-line)
    '("y" . meow-save)
    '("Y" . meow-sync-grab)
-   '("z" . goto-last-change)
-   '("Z" . goto-last-change-reverse)
-   '("'" . er/expand-region)
+   '("z" . er/expand-region)
+   '("'" . goto-last-change)
    '("`" . goto-char-2-right)
    ;; my shortcuts
    '("\\" . comment-line)
@@ -1152,8 +1184,10 @@
      ("t" "todo" entry
       (file+headline "/home/krishna/.emacs.d/todo.org" "Tasks")
       "* TODO [#A] %?")))
+ '(org-safe-remote-resources
+   '("\\`https://upload\\.wikimedia\\.org/wikipedia/commons/thumb/mobile_phone\\.png\\'"))
  '(package-selected-packages
-   '(all-the-icons tuareg caml merlin haskell-mode rg poet-theme rust-mode compat orderless embrace expand-region wfnames nerd-icons pretty-mode all-the-icons-dired-mode all-the-icons-dired posframe popup meow js2-mode ivy ht helm-core git-commit f emacsql-sqlite emacsql dash bind-key async all-the-icons-nerd-fonts kaolin-themes treemacs-all-the-icons auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
+   '(add-node-modules-path svelte-mode all-the-icons tuareg caml merlin haskell-mode rg poet-theme rust-mode compat orderless embrace expand-region wfnames nerd-icons pretty-mode all-the-icons-dired-mode all-the-icons-dired posframe popup meow js2-mode ivy ht helm-core git-commit f emacsql-sqlite emacsql dash bind-key async all-the-icons-nerd-fonts kaolin-themes treemacs-all-the-icons auto-yasnippet vterm string-inflection ligature sort-words origami mood-line consult consult-projectile vertico tree-sitter-langs tree-sitter company cape magit org-bullets denote treemacs markdown-mode tide web-mode flycheck typescript-mode goto-chg pulsar modus-themes atom-one-dark-theme crystal-mode reformatter dart-server flutter lsp-dart dart-mode fish-mode beacon doom-themes lua-mode emacsql-sqlite3 key-chord simple-modeline hungry-delete pandoc-mode highlight-indentation gruvbox-theme helm yasnippet multiple-cursors diminish mark-multiple projectile dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
  '(rustic-ansi-faces
    ["#2D2A2E" "#CC6666" "#A9DC76" "#FFD866" "#78DCE8" "#FF6188" "#78DCE8" "#FCFCFA"])
  '(tetris-x-colors

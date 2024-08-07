@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: componentInline
+# key: ;ci
+# --
+const $1: FC<{ $2 }> = ({ $3 }) => {
+  return (
+    $0
+  );
+}
