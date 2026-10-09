@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: generic
+# key: ;g
+# --
+<${1:T}>

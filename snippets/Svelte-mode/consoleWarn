@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: consoleWarn
+# key: ;w
+# --
+console.warn($0)

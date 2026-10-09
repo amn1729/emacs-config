@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: importLocal
+# key: ;il
+# --
+import ${1:$(yas-text)} from "./$1";$0

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: growBox
+# key: ;gb
+# --
+<Box flexGrow={1} />

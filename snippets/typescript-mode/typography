@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: typography
+# key: ;Ty
+# --
+<Typography $1>
+    $2
+</Typography> 

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: icon
+# key: ;i
+# --
+<Icon.$1 className="resp-icon$2" />

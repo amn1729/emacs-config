@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: class
+# key: ;c
+# --
+class $1:
+    """
+        ${2:Documentation}
+    """
+
+    def __init__(self$3):
+        $4

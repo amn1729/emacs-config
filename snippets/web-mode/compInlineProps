@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: compInlineProps
+# key: ;ci
+# --
+const $1 : FC <{ $2 }> = ({ $3 }) => {
+  return (
+    $0
+  );
+};

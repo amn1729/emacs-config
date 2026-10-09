@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: stack
+# key: ;S
+# --
+<Stack $1>
+    $2
+</Stack>

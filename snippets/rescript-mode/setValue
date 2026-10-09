@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: setValue
+# key: ;st
+# --
+${1:val} => set${2:Value}(_ => $1)

@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: useApi
+# key: ;ua
+# --
+  let {mutate, isLoading} = Hook.useApi({
+    fn: Api.$1.$2(cred, _),
+    onSuccess: _json => {
+      Toast.success("successfully")
+    $0
+    },
+    onError: err => err->Shape.Axios.errorMessage->Toast.error,
+  })

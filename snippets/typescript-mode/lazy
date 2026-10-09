@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: lazy
+# key: ;z
+# --
+const $1 = lazy(() => import("$2"))

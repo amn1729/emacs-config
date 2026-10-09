@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: useMemo1
+# key: ;um
+# --
+let $1 = React.useMemo1(() => {
+    $0
+}, [$2])

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: justifyContent
+# key: ;jc
+# --
+justifyContent="$1" 

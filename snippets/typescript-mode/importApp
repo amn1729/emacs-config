@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: importApp
+# key: ;ia
+# --
+import { $1 } from "@/app";

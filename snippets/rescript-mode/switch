@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: switch
+# key: ;w
+# --
+switch $1 {
+| $2 => $3
+}

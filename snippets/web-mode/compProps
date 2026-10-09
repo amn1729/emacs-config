@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: compProps
+# key: ;cc
+# --
+interface $1Props {
+    $2
+}
+
+const $1 : FC <$1Props> = ({$3}) => {
+  return (
+    $0
+  );
+};
+

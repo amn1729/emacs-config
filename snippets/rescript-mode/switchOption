@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: so
+# key: ;so
+# --
+switch $1 {
+| Some($2) => $3
+| None => ${4:()}
+}

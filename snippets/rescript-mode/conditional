@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: conditional
+# key: ;?
+# --
+{$1
+   ? $2
+   : React.null 
+}

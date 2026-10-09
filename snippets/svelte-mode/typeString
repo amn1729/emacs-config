@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: typeString
+# key: ;ts
+# --
+: string;

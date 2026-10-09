@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: flexRow
+# key: ;fr
+# --
+<Flex direction=[Row] $1>
+$2
+</Flex>

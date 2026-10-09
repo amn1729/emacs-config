@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: component
+# key: ;c
+# --
+open Ui
+
+@react.component
+let make = ($1) => {
+
+  <Flex>
+    <Text unitSize=16> {"${2:`(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`}"->React.string} </Text>
+  </Flex>
+}

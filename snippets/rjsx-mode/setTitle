@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: setTitle
+# key: st
+# --
+<SetTitle title="$1" />

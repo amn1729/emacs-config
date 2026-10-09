@@ -2,13 +2,11 @@
 # name: componentWithProps
 # key: ;cp
 # --
-import { FC } from "react";
-
-interface Props {
+type Props = {
     $2
 }
 
-const ${1:`(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`} : FC <Props> = ({$3}) => {
+const ${1:`(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`} : React.FC <Props> = (props) => {
   return (
     $0
   );

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: translate
+# key: ;tr
+# --
+{{ '${1:SUPPORT}.$2' | translate }}

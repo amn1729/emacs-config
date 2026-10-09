@@ -1,0 +1,21 @@
+# -*- mode: web -*-
+# name: fullComponentWithProps
+# key: ;ec
+# --
+import { FC } from "react";
+import { Center, Text } from "components";
+import { unit } from "helpers";
+
+type Props = {
+    $2
+}
+
+const ${1:`(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`} : FC <Props> = ({$3}) => {
+  return (
+    <Center>
+      <Text>$0</Text>
+    </Center>
+  );
+};
+
+export default $1;

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: extIcon
+# key: ;ei
+# --
+
+@module("@phosphor-icons/react") external $1: t = "${1:$(capitalize-first-char yas-text)}"

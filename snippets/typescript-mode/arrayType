@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: arrayType
+# key: ;Arr
+# --
+Array<$1>

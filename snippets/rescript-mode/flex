@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: flex
+# key: ;f
+# --
+<Flex $1>
+$2
+</Flex>

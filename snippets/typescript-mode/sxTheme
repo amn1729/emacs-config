@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: sxTheme
+# key: ;sxt
+# --
+sx={(theme) => ({
+    $1
+})}
+$0
